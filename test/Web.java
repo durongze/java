@@ -4,6 +4,11 @@ import org.openqa.selenium.ie.*;
 
 public class Web 
 {
+    public void SwitchToSpecFrame()
+    {
+        
+    }
+    
     public void GetWebPage()
     {
         System.out.println("web\n");
