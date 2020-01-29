@@ -11,8 +11,9 @@ public class Web
 {
     WebDriver iebw = null;
     String url = "www.baidu.com";
+	String kw = "kw";
     String btn = "su";
-    
+    String searchKw = "duyongze";
     public Web()
     {
         iebw = new InternetExplorerDriver();
@@ -37,8 +38,10 @@ public class Web
     public void GetWebPage()
     {
         iebw.get(url);
+        WebElement kwElement = iebw.findElement(By.id(kw));
+		kwElement.sendKeys();
         WebElement btnElement = iebw.findElement(By.id(btn));
-        
+		ExecJavaScript(btnElement);
         return ;
     }
     
