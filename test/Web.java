@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class Web 
 {
     WebDriver iebw = null;
+	String browser = "E:/Program Files/Google/Chrome/Application/chrome.exe";
     String url = "http://www.baidu.com";
 	String kw = "kw";
     String btn = "su";
@@ -20,7 +21,7 @@ public class Web
         // iebw = new InternetExplorerDriver();
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("disable-infobars");
-		options.setBinary("D:/Program Files/Google/Chrome/Application/chrome.exe");
+		options.setBinary(browser);
 		// System.setProperty("webdriver.chrome.driver", "C:/Windows");
 		iebw = new ChromeDriver(options);
 		iebw.manage().window().maximize();
