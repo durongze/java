@@ -13,7 +13,6 @@ public class Web
     WebDriver iebw = null;
     String url = "http://www.baidu.com";
 	String kw = "kw";
-	String kw = "kw";
     String btn = "su";
     String searchKw = "duyongze";
     public Web()
