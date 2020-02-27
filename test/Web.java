@@ -4,6 +4,7 @@ import java.io.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.*;
 import org.openqa.selenium.ie.*;
+import org.openqa.selenium.firefox.*;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -19,11 +20,14 @@ public class Web
     public Web()
     {
         // iebw = new InternetExplorerDriver();
-		ChromeOptions options = new ChromeOptions();
-		options.addArguments("disable-infobars");
-		options.setBinary(browser);
-		// System.setProperty("webdriver.chrome.driver", "C:/Windows");
-		iebw = new ChromeDriver(options);
+
+		// ChromeOptions options = new ChromeOptions();
+		// options.addArguments("disable-infobars");
+		// options.setBinary(browser);
+		//// System.setProperty("webdriver.chrome.driver", "C:/Windows");
+		// iebw = new ChromeDriver(options);
+        
+        iebw = new FirefoxDriver();
 		iebw.manage().window().maximize();
 		
     }
