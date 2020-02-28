@@ -1,3 +1,4 @@
+set proj_name=Web
 set proj_dir=%cd%
 set all_jar=%proj_dir%\lib\selenium-server-standalone-3.141.59.jar
 set all_jar=%all_jar%;%proj_dir%\lib\poi-4.1.1.jar
@@ -22,14 +23,14 @@ set all_jar=%all_jar%;%proj_dir%\lib\ooxml-lib\curvesapi-1.06.jar
 set all_jar=%all_jar%;%proj_dir%\lib\ooxml-lib\xmlbeans-3.1.0.jar
 
 set PATH=%PATH%;%JAVA_HOME%\bin;
-javac -classpath %all_jar% web.java
+javac -classpath %all_jar% %proj_name%.java
 
 set CLASSPATH=%CLASSPATH%;%all_jar%;
 
 mkdir com\durongze\
 
-move Web.class com/durongze/
+move %proj_name%.class com/durongze/
 
-java com.durongze.Web
+java com.durongze.%proj_name%
  
 pause
