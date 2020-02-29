@@ -32,7 +32,8 @@ set(CMAKE_CSharp_FLAGS "/langversion:latest")
 target_link_libraries(WebExcel Excel)
 
 # If necessary, link in other library/DLL references, such as 3rd party libraries.
-set_property(TARGET WebExcel PROPERTY VS_DOTNET_REFERENCE_Excel lib/${NET_VER_DIR}/Excel.dll)
+set_property(TARGET WebExcel PROPERTY VS_DOTNET_REFERENCE_Microsoft.Office.Interop.Excel lib/${NET_VER_DIR}/Microsoft.Office.Interop.Excel.dll)
+set_property(TARGET WebExcel PROPERTY VS_DOTNET_REFERENCE_Microsoft.Office.Tools.Excel lib/${NET_VER_DIR}/Microsoft.Office.Tools.Excel.dll)
 
 # Add in the .NET reference libraries.
 set_property(TARGET WebExcel PROPERTY VS_DOTNET_REFERENCES

@@ -38,7 +38,7 @@ class Web{
         Thread.Sleep(5000);
         js.ExecuteScript(jsCmd);
     }
-
+    // 在属性中修改为控制台程序，才能看到输出
     public static void Main(string[] args) {
         Console.WriteLine("Main");
         Web wc = new Web();

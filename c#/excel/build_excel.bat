@@ -8,4 +8,7 @@ MSBuild WebExcel.csproj /p:Configuration=Release /p:Platform=x86
 popd
 
 for /f %%i in ('dir /s /b "*.dll"') do (copy %%i .\)
+tasklist  | findstr /i "excel"
+taskkill /f /im WebExcel.exe
+taskkill /f /im EXCEL.exe
 pause
