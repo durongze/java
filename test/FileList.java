@@ -36,7 +36,8 @@ public class FileList{
         try {
             System.out.println("f size:" + f.length());
             in.read(data);
-            OutputStream out = new FileOutputStream(new File("d:\\xx.bin"));
+            OutputStream out = new FileOutputStream(new File("d:\\xx.bin"), true);
+            // OutputStream out = new FileOutputStream(new File("d:\\xx.bin"));
             out.write(data);
             out.close();
         } catch (Exception e) {
