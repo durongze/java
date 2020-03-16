@@ -84,11 +84,66 @@ namespace Email
             mailItem = null;
             olApp = null;
         }
-        
+        public void ExportMail(Outlook.MailItem mail, String path)
+        {
+            if (mail.Subject != null)
+            {
+                String fileName = mail.Subject.Replace("/", "-");
+                mail.SaveAs(path + "\\" + fileName + ".msg");
+            }
+        }
+        public void DisplayMail(Outlook.MailItem mail)
+        {
+            if (mail != null)
+            {
+                System.Console.WriteLine(mail.Sender);
+                System.Console.WriteLine(mail.To);
+                System.Console.WriteLine(mail.CC);
+                System.Console.WriteLine(mail.Subject);
+                System.Console.WriteLine(mail.ReceivedTime);
+                System.Console.WriteLine(mail.Body);
+                ExportMail(mail, "d:\\");
+            }
+        }
+        public void DisplayFolder(Outlook.MAPIFolder folder)
+        {
+            Outlook.MailItem mail;
+            int mailCnt = folder.Items.Count;
+            // foreach (var item in folder.Items)
+            {
+                // DisplayMail((Outlook.MailItem)item);
+            }
+            // for (int idx = 1; idx <= mailCnt; ++idx)
+            {
+                // DisplayMail((Outlook.MailItem)folder.Items[idx]);
+            }
+            System.Collections.IEnumerator ie = folder.Items.GetEnumerator();
+            while (ie.MoveNext())
+            {
+                DisplayMail((Outlook.MailItem)ie.Current);
+            }
+        }
+        public void DisplayAllFolder()
+        {
+            Outlook.MAPIFolder folder;
+            Outlook.Application olApp = new Outlook.Application();
+            Outlook.NameSpace olNs = olApp.GetNamespace("MAPI");
+            // for (folder = olNs.PickFolder(); ;)
+            // folder = olNs.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderDrafts);
+            // folder = olNs.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox);
+            // folder = olNs.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderOutbox);
+            // folder = olNs.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderJournal);
+            folder = olNs.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail);
+            // folder = olNs.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderDeletedItems);
+            {
+                DisplayFolder(folder);
+            }
+        }
         public static void Main(string[] args)
         {
             EmailHelper eh = new EmailHelper();
-            eh.WriteMail();
+            // eh.WriteMail();
+            eh.DisplayAllFolder();
             return ;
         }
     }
