@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Net.Mail;
 using System.Net;
+using System.Reflection;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace Email
-{   
-   public class EmailHelper
+{
+    public class EmailHelper
     {
+        Outlook.Application olApp = new Outlook.Application();
         public bool isInTime(string start, string end)
         {
             TimeSpan startTime = DateTime.Parse(start).TimeOfDay;
@@ -67,10 +69,8 @@ namespace Email
             return content;
         }
         
-        
         public void WriteMail() 
         {
-            Outlook.Application olApp = new Outlook.Application();
             Outlook.MailItem mailItem = (Outlook.MailItem)olApp.CreateItem(Outlook.OlItemType.olMailItem);
             mailItem.To = "durongze@qq.com";
             mailItem.CC = "duyongzeyx@qq.com";
@@ -96,54 +96,89 @@ namespace Email
         {
             if (mail != null)
             {
-                System.Console.WriteLine(mail.Sender);
-                System.Console.WriteLine(mail.To);
-                System.Console.WriteLine(mail.CC);
-                System.Console.WriteLine(mail.Subject);
-                System.Console.WriteLine(mail.ReceivedTime);
-                System.Console.WriteLine(mail.Body);
-                ExportMail(mail, "d:\\");
+                GetMailField(mail);
+                System.Console.WriteLine("Sender : " + mail.SenderEmailAddress);
+                System.Console.WriteLine("To : " + mail.To);
+                System.Console.WriteLine("CC : " + mail.CC);
+                System.Console.WriteLine("Subject : " + mail.Subject);
+                System.Console.WriteLine("ReceivedTime : " + mail.ReceivedTime);
+                System.Console.WriteLine("Body : " + mail.Body);
             }
         }
-        public void DisplayFolder(Outlook.MAPIFolder folder)
+        public void ProcMail(Outlook.MailItem mail)
         {
-            Outlook.MailItem mail;
+            if (mail != null)
+            {
+                DisplayMail(mail);
+                // ExportMail(mail, "d:\\");
+            }
+        }
+        public void ProcFolder(Outlook.MAPIFolder folder)
+        {
+            Outlook.MailItem item = null;
             int mailCnt = folder.Items.Count;
             // foreach (var item in folder.Items)
+            // for (int idx = 1; idx <= mailCnt; ++idx, item = (Outlook.MailItem)folder.Items[idx])
+            for (System.Collections.IEnumerator ie = folder.Items.GetEnumerator(); ie.MoveNext(); item = (Outlook.MailItem)ie.Current)
             {
-                // DisplayMail((Outlook.MailItem)item);
-            }
-            // for (int idx = 1; idx <= mailCnt; ++idx)
-            {
-                // DisplayMail((Outlook.MailItem)folder.Items[idx]);
-            }
-            System.Collections.IEnumerator ie = folder.Items.GetEnumerator();
-            while (ie.MoveNext())
-            {
-                DisplayMail((Outlook.MailItem)ie.Current);
+                ProcMail(item);
             }
         }
-        public void DisplayAllFolder()
+
+        /*
+            (Outlook.OlDefaultFolders.olFolderInbox);
+            (Outlook.OlDefaultFolders.olFolderOutbox);
+            (Outlook.OlDefaultFolders.olFolderDrafts);
+            (Outlook.OlDefaultFolders.olFolderJournal);
+            (Outlook.OlDefaultFolders.olFolderSentMail);
+            (Outlook.OlDefaultFolders.olFolderDeletedItems); 
+        */
+        public void ProcFolder(Outlook.OlDefaultFolders idx)
         {
-            Outlook.MAPIFolder folder;
-            Outlook.Application olApp = new Outlook.Application();
             Outlook.NameSpace olNs = olApp.GetNamespace("MAPI");
-            // for (folder = olNs.PickFolder(); ;)
-            // folder = olNs.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderDrafts);
-            // folder = olNs.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox);
-            // folder = olNs.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderOutbox);
-            // folder = olNs.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderJournal);
-            folder = olNs.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail);
-            // folder = olNs.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderDeletedItems);
+            Outlook.MAPIFolder folder;
+            folder = olNs.GetDefaultFolder(idx);
+            ProcFolder(folder);
+        }
+        public void ProcNameSpace()
+        {
+            foreach(Outlook.OlDefaultFolders i in Enum.GetValues(typeof(Outlook.OlDefaultFolders)))
             {
-                DisplayFolder(folder);
+                ProcFolder(i);
             }
+        }
+
+        public IList<string> GetMailProperties(Outlook.MailItem mail)
+        {
+            IList<string> propties = new List<string>();
+
+            Type t = typeof(Outlook.MailItem);
+            foreach (PropertyInfo pi in t.GetProperties())
+            {
+                propties.Add(pi.Name);
+                var val = pi.GetValue(mail, null);
+                System.Console.WriteLine(val.ToString());
+            }
+            return propties;
+        }
+        public IList<string> GetMailField(Outlook.MailItem mail)
+        {
+            IList<string> member = new List<string>();
+
+            Type t = typeof(Outlook.MailItem);
+            foreach (MemberInfo pi in t.GetDefaultMembers())
+            {
+                member.Add(pi.Name);
+                var val = pi.GetCustomAttributes(true);
+                System.Console.WriteLine(val.ToString());
+            }
+            return member;
         }
         public static void Main(string[] args)
         {
             EmailHelper eh = new EmailHelper();
             // eh.WriteMail();
-            eh.DisplayAllFolder();
+            eh.ProcNameSpace();
             return ;
         }
     }
