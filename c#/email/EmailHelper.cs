@@ -6,12 +6,21 @@ using System.Net.Mail;
 using System.Net;
 using System.Reflection;
 using Outlook = Microsoft.Office.Interop.Outlook;
+using System.Globalization;
 
 namespace Email
 {
     public class EmailHelper
     {
         Outlook.Application olApp = new Outlook.Application();
+        enum TimeCondType
+        {
+            Day,
+            Week,
+            Month,
+            Season,
+            Year
+        };
         public bool isInTime(string start, string end)
         {
             TimeSpan startTime = DateTime.Parse(start).TimeOfDay;
@@ -19,6 +28,14 @@ namespace Email
 
             TimeSpan dspNow = DateTime.Now.TimeOfDay;
             if (dspNow > startTime && dspNow < endTime)
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool IsInDate(DateTime start, DateTime end, DateTime target)
+        {
+            if (target > start && target < end)
             {
                 return true;
             }
@@ -86,10 +103,12 @@ namespace Email
         }
         public void ExportMail(Outlook.MailItem mail, String path)
         {
-            if (mail.Subject != null)
+            if (mail.Subject != null && ProcEmailCond(mail))
             {
                 String fileName = mail.Subject.Replace("/", "-");
-                mail.SaveAs(path + "\\" + fileName + ".msg");
+                fileName = fileName + mail.ReceivedTime.ToString().Replace("/", "-");
+                fileName = path + "\\" + fileName + ".msg";
+                mail.SaveAs(fileName);
             }
         }
         public void DisplayMail(Outlook.MailItem mail)
@@ -109,8 +128,8 @@ namespace Email
         {
             if (mail != null)
             {
-                DisplayMail(mail);
-                // ExportMail(mail, "d:\\");
+                // DisplayMail(mail);
+                ExportMail(mail, "d:\\");
             }
         }
         public void ProcFolder(Outlook.MAPIFolder folder)
@@ -174,11 +193,86 @@ namespace Email
             }
             return member;
         }
+
+        public static DateTime GetTimeStartByType(string TimeType, DateTime now)
+        {
+            switch (TimeType)
+            {
+                case "Day":
+                    return now.AddDays(0).Date;
+                case "Week":
+                    return now.AddDays(-(int)now.DayOfWeek + 1).Date;
+                case "Month":
+                    return now.AddDays(-now.Day + 1).Date;
+                case "Season":
+                    var time = now.AddMonths(0 - ((now.Month - 1) % 3)).Date;
+                    return time.AddDays(-time.Day + 1).Date;
+                case "Year":
+                    return now.AddDays(-now.DayOfYear + 1).Date;
+                default:
+                    return DateTime.Now;
+            }
+        }
+
+        public static DateTime GetTimeEndByType(string TimeType, DateTime now)
+        {
+            switch (TimeType)
+            {
+                case "Day":
+                    return now.AddDays(1).Date.AddSeconds(-1);
+                case "Week":
+                    return now.AddDays(7 - (int)now.DayOfWeek + 1).Date.AddSeconds(-1);
+                case "Month":
+                    return now.AddMonths(1).AddDays(-now.AddMonths(1).Day + 1).Date.AddSeconds(-1);
+                case "Season":
+                    var time = now.AddMonths((3 - now.Month % 3) % 3 + 1);
+                    return time.AddDays(-time.AddMonths(1).Day).Date.AddSeconds(-1);
+                case "Year":
+                    var time2 = now.AddYears(1);
+                    return time2.AddDays(-time2.DayOfYear).Date.AddDays(1).Date.AddSeconds(-1);
+                default:
+                    return DateTime.Now;
+            }
+        }
+
+        public bool IsInSpecDate(Outlook.MailItem mail, string specDateType)
+        {
+            DateTime start = GetTimeStartByType(specDateType, DateTime.Now);
+            DateTime end = GetTimeEndByType(specDateType, DateTime.Now);
+            DateTime target = mail.ReceivedTime;
+            return IsInDate(start, end, target);
+        }
+        public bool ProcEmailCond(Outlook.MailItem mail)
+        {
+            switch (m_timeType)
+            {
+                case TimeCondType.Day:
+                    return (IsInSpecDate(mail, "Day"));
+                case TimeCondType.Week:
+                    return (IsInSpecDate(mail, "Week"));
+                case TimeCondType.Month:
+                    return (IsInSpecDate(mail, "Month"));
+                case TimeCondType.Season:
+                    return (IsInSpecDate(mail, "Season"));
+                case TimeCondType.Year:
+                    return (IsInSpecDate(mail, "Year"));
+
+            }
+            return false;
+        }
+
+        void SetTimeCondType(TimeCondType type)
+        {
+            m_timeType = type;
+        }
+        TimeCondType m_timeType = TimeCondType.Year;
         public static void Main(string[] args)
         {
             EmailHelper eh = new EmailHelper();
             // eh.WriteMail();
-            eh.ProcNameSpace();
+            // eh.ProcNameSpace();
+            eh.SetTimeCondType(TimeCondType.Month);
+            eh.ProcFolder(Outlook.OlDefaultFolders.olFolderSentMail);
             return ;
         }
     }
