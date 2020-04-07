@@ -1,8 +1,8 @@
-set JAVA_HOME=E:\Program Files\Java\jdk-13.0.2
+set JAVA_HOME=D:\Program Files\Java\jdk1.8.0_60
 set PATH=%PATH%;%JAVA_HOME%\bin;E:\Android\sdk\ndk-bundle\android-ndk-r20
-javac -d . callc.java
+javac -encoding utf-8 -d . callc.java
 rem javah -jni com.durongze.jni.CallC
-javac -h . callc.java
+javac -encoding utf-8 -h . callc.java
 
 rem ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk
 

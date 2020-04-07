@@ -5,20 +5,36 @@
 #ifndef _Included_com_durongze_jni_CallC
 #define _Included_com_durongze_jni_CallC
 #ifdef __cplusplus
+#if __cplusplus
 extern "C" {
+#endif
 #endif
 /*
  * Class:     com_durongze_jni_CallC
  * Method:    CInterface
- * Signature: ()V
+ * Signature: ([Ljava/lang/String;[I[FI)V
  */
 JNIEXPORT void JNICALL Java_com_durongze_jni_CallC_CInterface
-  (JNIEnv *, jobject)
+  (JNIEnv *env, jobject, jobjectArray names, jintArray ages, jfloatArray heights, jint num)
   {
-      printf("%s\n", __FUNCTION__);
+      int idx = 0;
+      jint *as = env->GetIntArrayElements(ages, 0);
+      jfloat *hs = env->GetFloatArrayElements(heights, 0);
+      for (; idx < num; ++idx) {
+        jstring ns = static_cast<jstring>(env->GetObjectArrayElement(names, idx));
+        const char* pns = env->GetStringUTFChars(ns,0);
+        printf("%s:       names[%d]:%s,         ages[%d]:%d,    heights[%d]:%lf\n",
+            __FUNCTION__, idx, pns, idx, as[idx], idx, hs[idx]);
+        env->ReleaseStringUTFChars(ns, 0);
+      }
+      env->ReleaseIntArrayElements(ages, as, 0);
+      env->ReleaseFloatArrayElements(heights, hs, 0);
   }
 
 #ifdef __cplusplus
+#if __cplusplus
 }
 #endif
+#endif
+
 #endif
