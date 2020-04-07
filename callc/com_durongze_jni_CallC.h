@@ -10,9 +10,9 @@ extern "C" {
 /*
  * Class:     com_durongze_jni_CallC
  * Method:    CInterface
- * Signature: ([Ljava/lang/String;[I[FI)V
+ * Signature: ([Ljava/lang/String;[I[FI)[Ljava/lang/String;
  */
-JNIEXPORT void JNICALL Java_com_durongze_jni_CallC_CInterface
+JNIEXPORT jobjectArray JNICALL Java_com_durongze_jni_CallC_CInterface
   (JNIEnv *, jobject, jobjectArray, jintArray, jfloatArray, jint);
 
 #ifdef __cplusplus

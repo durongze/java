@@ -1,7 +1,7 @@
 package com.durongze.jni;
 
 public class CallC{
-    public native void CInterface(String[] name, int[] age, float[] height, int num);
+    public native String[] CInterface(String[] name, int[] age, float[] height, int num);
     static {
         System.loadLibrary("CLibrary");
     }
@@ -11,11 +11,14 @@ public class CallC{
         String[] name = new String[num]; // ("durongze", "duyongze");
         int[] age = new int[num]; // (28, 30);
         float[] height = new float[num]; // (177, 188);
-        for (; idx < num; ++idx){
-            name[idx] = Integer.toString(idx);
-            age[idx] = idx;
-            height[idx] = idx + num;
+        for (idx = 0; idx < num; ++idx){
+            name[idx] = Integer.toString(100 + idx);
+            age[idx] = 200 + idx;
+            height[idx] = 300 + idx;
         }
-        new CallC().CInterface(name, age, height, num);
+        String[] vals = new CallC().CInterface(name, age, height, num);
+        for (idx = 0; idx < vals.length; ++idx){
+            System.out.println(vals[idx]);
+        }
     }
 };
