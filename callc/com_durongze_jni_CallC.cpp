@@ -30,8 +30,8 @@ JNIEXPORT jobjectArray JNICALL Java_com_durongze_jni_CallC_CInterface
         const char* pns = env->GetStringUTFChars(ns,0);
         printf("%s:       names[%d]:%s,         ages[%d]:%d,    heights[%d]:%lf\n",
             __FUNCTION__, idx, pns, idx, as[idx], idx, hs[idx]);
-        env->ReleaseStringUTFChars(ns, 0);
         env->SetObjectArrayElement(result, idx, ns);
+		env->ReleaseStringUTFChars(ns, 0);
       }
       env->ReleaseIntArrayElements(ages, as, 0);
       env->ReleaseFloatArrayElements(heights, hs, 0);
