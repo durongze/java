@@ -9,6 +9,9 @@ cmake -G "Visual Studio 14 2015 Win64" ..
 call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\vcvars32.bat"
 msbuild CppCallJni.vcxproj
 Debug\CppCallJni.exe
+dumpbin /dependents Debug\CppCallJni.exe
 popd
+
+echo "调试时如果报异常，记得不要点击中断，要点击继续"
 
 pause

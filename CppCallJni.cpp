@@ -16,16 +16,12 @@ extern "C" {
 		int status = 0;
 		JavaVM *pvm = NULL;
 		JNIEnv *penv = NULL;
-		JavaVMInitArgs args;
 		JavaVMOption options[4];
 		options[0].optionString = "-Djava.compiler=NONE";
 		options[1] = { "-Djava.class.path=.;D:\\Program Files\\Java\\jre1.8.0_60\\lib\\dt.jar;D:\\Program Files\\Java\\jre1.8.0_60\\lib\\tools.jar", NULL };
 		options[2].optionString = "-verbose:NONE";
 		options[3].optionString = "-XX:+CreateMinidumpOnCrash";
-		args.options = options;
-		args.nOptions = 4;
-		args.version = JNI_VERSION_1_8;
-		args.ignoreUnrecognized = JNI_TRUE;
+		JavaVMInitArgs args = { JNI_VERSION_1_8, 4, options, JNI_TRUE };
 		char *jvmDll = JVM_DLL;
 		HMODULE hmod = LoadLibraryA("D:\\Program Files\\Java\\jre1.8.0_60\\bin\\server\\jvm.dll");
 		JNICreateJavaVM pJNICreateJavaVM = (JNICreateJavaVM)GetProcAddress(hmod, "JNI_CreateJavaVM");
