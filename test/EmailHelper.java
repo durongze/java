@@ -73,7 +73,8 @@ public class EmailHelper {
             }
 
         }
-        msg.send();
+        // msg.send();
+        msg.save();
     }
 
     /**
