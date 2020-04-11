@@ -2,8 +2,13 @@ package com.durongze.jni;
 
 public class CallC{
     public native String[] CInterface(String[] name, int[] age, float[] height, int num);
+    public native int CInterfaceTest();
     static {
         System.loadLibrary("CLibrary");
+    }
+    public void JInterface()
+    {
+        System.out.println("JInterface");
     }
     public static void main(String[] args){
         int idx = 0;
@@ -18,7 +23,9 @@ public class CallC{
         }
         String[] vals = new CallC().CInterface(name, age, height, num);
         for (idx = 0; idx < vals.length; ++idx){
-            System.out.println(vals[idx]);
+            System.out.println("vals:[" + idx +"]:" + vals[idx]);
         }
+        int ret = new CallC().CInterfaceTest();
+        System.out.println("ret :" + ret);
     }
 };

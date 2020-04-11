@@ -45,6 +45,24 @@ public class FileList{
         }
         return data;
     }
+    
+    public byte[] ReadText(File f) throws Exception 
+    {
+        InputStream in = new FileInputStream(f);
+        byte[] data = new byte[(int)f.length()];
+        try {
+            System.out.println("f size:" + f.length());
+            in.read(data);
+            OutputStream out = new FileOutputStream(new File("d:\\xx.txt"), true);
+            // OutputStream out = new FileOutputStream(new File("d:\\xx.txt"));
+            out.write(data);
+            out.close();
+        } catch (Exception e) {
+            // System.out.println("dir:");
+        }
+        return data;
+    }
+    
     public void ProcAllFile(File[] fileList) throws Exception 
     {
         System.out.println("ShowFilePath");

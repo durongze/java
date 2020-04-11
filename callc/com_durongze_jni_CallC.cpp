@@ -2,21 +2,74 @@
 #include <jni.h>
 /* Header for class com_durongze_jni_CallC */
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
+
 #ifndef _Included_com_durongze_jni_CallC
 #define _Included_com_durongze_jni_CallC
+
 #ifdef __cplusplus
 #if __cplusplus
 extern "C" {
 #endif
 #endif
+
+#define LOGV(...) printf(__VA_ARGS__)
+#define LOGD(...) printf(__VA_ARGS__)
+#define LOGI(...) printf(__VA_ARGS__)
+#define LOGW(...) printf(__VA_ARGS__)
+#define LOGE(...) printf(__VA_ARGS__)
+
+void TestMain()
+{
+    int i;
+    signed char c;
+    short s;
+	float f;
+
+	c = -1;
+    f = (float)c;
+    LOGE("1. c:0x%x\n", c);
+    LOGE("1. f:%lf\n", f);
+    c = 0;
+    f = c;
+    LOGE("2. c:0x%x\n", c);
+    LOGE("2. f:%lf\n", f);
+    c = -1;
+	f = c;
+    for (int i = 0; i < 1000; i++){
+        f = f + c;
+    }
+	LOGI("3. f + c:%lf\n", f);
+	i = -1;
+	f = i;
+    for (int idx = 0; idx < 1000; idx ++){
+        f = f + i;
+    }
+    LOGI("3. f + i:%lf\n", f);
+	
+	c = 0;
+    i = 1;
+    f = (!c)*(i);
+    for (int idx = 0; idx < 5; idx++){
+        f = f + f;
+    }
+    LOGE("4. f:%lf\n", f);
+    
+    s = -1;
+    f = s;
+    LOGE("5. f:%lf\n", f);
+}
 /*
  * Class:     com_durongze_jni_CallC
  * Method:    CInterface
  * Signature: ([Ljava/lang/String;[I[FI)[Ljava/lang/String;
  */
+ //                            Java_com_example_myapplication_MainActivity_CInterface
 JNIEXPORT jobjectArray JNICALL Java_com_durongze_jni_CallC_CInterface
   (JNIEnv *env, jobject, jobjectArray names, jintArray ages, jfloatArray heights, jint num)
   {
+      TestMain();
       jobjectArray result;
       jclass intArrCls = env->FindClass("java/lang/String");
       result = env->NewObjectArray(num, intArrCls, NULL);
@@ -36,6 +89,28 @@ JNIEXPORT jobjectArray JNICALL Java_com_durongze_jni_CallC_CInterface
       env->ReleaseIntArrayElements(ages, as, 0);
       env->ReleaseFloatArrayElements(heights, hs, 0);
       return result;
+  }
+
+JNIEXPORT jint JNICALL Java_com_durongze_jni_CallC_CInterfaceTest
+  (JNIEnv *env, jobject)
+  {
+      TestMain();
+      #if 0
+      FILE* fp = fopen("/data/local/tmp/test.txt", "w+");
+      if (fp == NULL) {
+          return errno;
+      }
+      char buf[64] = {"xxxxxxxxxxxxxxx"}; 
+      fwrite(buf, strlen(buf), 1, fp);
+      fclose(fp);
+      return strlen(buf);
+      #else
+	  jclass jCallC = env->FindClass("com/durongze/jni/CallC");
+	  jobject jObject = env->AllocObject(jCallC);
+	  jmethodID jMethodId = env->GetMethodID(jCallC, "JInterface", "()V");
+	  env->CallVoidMethod(jObject, jMethodId);
+      return 77;
+      #endif
   }
 
 #ifdef __cplusplus

@@ -15,6 +15,14 @@ extern "C" {
 JNIEXPORT jobjectArray JNICALL Java_com_durongze_jni_CallC_CInterface
   (JNIEnv *, jobject, jobjectArray, jintArray, jfloatArray, jint);
 
+/*
+ * Class:     com_durongze_jni_CallC
+ * Method:    CInterfaceTest
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_durongze_jni_CallC_CInterfaceTest
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif
