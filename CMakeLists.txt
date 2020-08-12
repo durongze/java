@@ -15,3 +15,5 @@ include_directories(CppCallJni ${CMAKE_CURRENT_SOURCE_DIR}/ ${CMAKE_CURRENT_SOUR
 link_directories(CppCallJni ${CMAKE_CURRENT_SOURCE_DIR}/callc ${JAVA_HOME}/lib/)
 add_executable(CppCallJni ${C_LIBRARY_SRC} ${CPP_CALL_JNI_SRC})
 #target_link_libraries(CppCallJni jvm)
+set(CMAKE_CPPCALLJNI_FLAGS "${CMAKE_CXX_FLAGS} -DUPNP_API")
+set_target_properties(CppCallJni PROPERTIES COMPILE_FLAGS ${CMAKE_CPPCALLJNI_FLAGS})
