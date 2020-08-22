@@ -23,6 +23,14 @@ JNIEXPORT jobjectArray JNICALL Java_com_durongze_jni_CallC_CInterface
 JNIEXPORT jint JNICALL Java_com_durongze_jni_CallC_CInterfaceTest
   (JNIEnv *, jobject);
 
+/*
+ * Class:     com_durongze_jni_CallC
+ * Method:    CInterfaceString
+ * Signature: (Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_durongze_jni_CallC_CInterfaceString
+  (JNIEnv *, jobject, jstring);
+
 #ifdef __cplusplus
 }
 #endif

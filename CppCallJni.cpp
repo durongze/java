@@ -1,6 +1,8 @@
 #include "com_durongze_jni_CallC.h"
 #include <Windows.h>
 
+#include <stdio.h>
+
 #define JAVA_HOME "D:\\Program Files\\Java\\jre1.8.0_60"
 #define JVM_DLL JAVA_HOME "\\bin\\server\\" "jvm.dll"
 
@@ -50,7 +52,12 @@ extern "C" {
 			penv->ReleaseStringUTFChars(ns, 0);
 		}
 
-		jobjectArray res = (jobjectArray)Java_com_durongze_jni_CallC_CInterface(penv, NULL, names, ages, heights, num);
+		jobjectArray res = Java_com_durongze_jni_CallC_CInterface(penv, NULL, names, ages, heights, num);
+		jstring func = penv->NewStringUTF("main");
+		jstring retStr = Java_com_durongze_jni_CallC_CInterfaceString(penv, NULL, func);
+		jboolean b = false;
+		printf("retStr:%s\n", penv->GetStringUTFChars(retStr, &b));
+		penv->ReleaseStringUTFChars(retStr, 0);
 
 		pvm->DestroyJavaVM();
 	}

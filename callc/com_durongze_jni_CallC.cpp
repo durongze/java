@@ -113,6 +113,15 @@ JNIEXPORT jint JNICALL Java_com_durongze_jni_CallC_CInterfaceTest
       #endif
   }
 
+JNIEXPORT jstring JNICALL Java_com_durongze_jni_CallC_CInterfaceString
+(JNIEnv *env, jobject, jstring name)
+{
+	jboolean b = false;
+	printf("retStr:%s\n", env->GetStringUTFChars(name, &b));
+	env->ReleaseStringUTFChars(name, 0);
+	return env->NewStringUTF(__FUNCTION__);
+}
+
 #ifdef __cplusplus
 #if __cplusplus
 }

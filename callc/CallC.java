@@ -3,6 +3,7 @@ package com.durongze.jni;
 public class CallC{
     public native String[] CInterface(String[] name, int[] age, float[] height, int num);
     public native int CInterfaceTest();
+    public native String CInterfaceString(String func);
     static {
         System.loadLibrary("CLibrary");
     }
@@ -27,5 +28,7 @@ public class CallC{
         }
         int ret = new CallC().CInterfaceTest();
         System.out.println("ret :" + ret);
+        String retStr = new CallC().CInterfaceString(name[0]);
+        System.out.println("retStr :" + retStr);
     }
 };
