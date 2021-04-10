@@ -1,5 +1,5 @@
 @echo off
-set cmd_srcs=MyThread.cs
+set cmd_srcs=MyThread.cs TcpServer.cs TcpClient.cs
 set app_srcs=MyApp.cs
 set dll_srcs=MyDll.cs
 
