@@ -13,10 +13,9 @@ for %%i in (%srcs%) do (
         echo %%i succ.................................
     )
 )
-
 mkdir mypkg
 move *.class mypkg
 
-java mypkg.SocketServer
+rem java mypkg.SocketServer
 
 :proc_err

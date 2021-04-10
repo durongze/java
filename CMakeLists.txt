@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.4.1)
 # close openssl
 
-project(CppCallJni)
-
-add_subdirectory(callc)
+project(CppCall)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDYZ_DBG")
 set(JAVA_HOME "$ENV{JAVA_HOME}")
