@@ -1,6 +1,7 @@
 package mypkg;
+import java.net.*;
 
-class ForScannerChild extends ForScanner{
+class ForScannerChild{
     public static void main(String args[]){
         int i = 0;
         for (i = 0; i < 5; ++i){
