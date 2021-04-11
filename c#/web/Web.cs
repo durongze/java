@@ -9,6 +9,7 @@ class Web{
     IWebDriver iebw;
     string url = "www.baidu.com";
     string btn = "su";
+    string kw = "kw";
     string jsZoom = "document.body.style.zoom='1'";
     public Web() {
         iebw = new InternetExplorerDriver();
@@ -21,8 +22,6 @@ class Web{
     void GetWebPage() {
         ExecJavaScript(jsZoom);
         iebw.Navigate().GoToUrl(url);
-        IWebElement element = iebw.FindElement(By.Id(btn));
-        ExecJavaScript(element);
     }
 
     void ExecJavaScript(IWebElement element)
@@ -38,10 +37,27 @@ class Web{
         Thread.Sleep(5000);
         js.ExecuteScript(jsCmd);
     }
+
+    void StartSearch()
+    {
+        IWebElement element = iebw.FindElement(By.Id(btn));
+        Console.WriteLine(element.ToString());
+        ExecJavaScript(element);
+    }
+
+    void InputKeyWord()
+    {
+        IWebElement element = iebw.FindElement(By.Id(kw));
+        Console.WriteLine(element.ToString());
+        element.SendKeys("123456");
+    }
     // 在属性中修改为控制台程序，才能看到输出
     public static void Main(string[] args) {
         Console.WriteLine("Main");
         Web wc = new Web();
         wc.GetWebPage();
+        wc.InputKeyWord();
+        wc.StartSearch();
+        return;
     }
 }
