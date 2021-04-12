@@ -5,21 +5,21 @@ using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support;
 
-class Web{
+class TsDownload {
     IWebDriver iebw;
-    string url = "www.baidu.com";
-    string btn = "su";
-    string kw = "kw";
+    string url = "https://www.ztbw.net/guocanju/gdjzj/1-3.html";
     string jsZoom = "document.body.style.zoom='1'";
-    public Web() {
+    public TsDownload()
+    {
         iebw = new InternetExplorerDriver();
         // iebw = new ChromeDriver();
     }
-    ~Web()
+    ~TsDownload()
     {
         iebw.Close();
     }
-    public void GetWebPage() {
+    public void GetWebPage()
+    {
         ExecJavaScript(jsZoom);
         iebw.Navigate().GoToUrl(url);
     }
@@ -38,26 +38,11 @@ class Web{
         js.ExecuteScript(jsCmd);
     }
 
-    public void StartSearch()
-    {
-        IWebElement element = iebw.FindElement(By.Id(btn));
-        Console.WriteLine(element.ToString());
-        ExecJavaScript(element);
-    }
-
-    public void InputKeyWord()
+    public int FindElementById(string kw)
     {
         IWebElement element = iebw.FindElement(By.Id(kw));
         Console.WriteLine(element.ToString());
         element.SendKeys("123456");
-    }
-    // 在属性中修改为控制台程序，才能看到输出
-    public static void Main(string[] args) {
-        Console.WriteLine("Main");
-        // Web wc = new Web();
-        TsDownload wc = new TsDownload();
-        wc.GetWebPage();
-        wc.FindElementById("lelevideo");
-        return;
+        return 0;
     }
 }
