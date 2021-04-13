@@ -31,3 +31,4 @@ for %%i in (%app_srcs%) do (
 )
 
 :proc_err
+pause
