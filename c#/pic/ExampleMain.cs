@@ -31,6 +31,12 @@ namespace Example
 			g.DrawRectangle(borderPen, bx + 3, by + 3, 23, 23);
 		}
 
+		static void DrawWord(int bx, int by, Graphics g, String str)
+		{
+			Font f = new Font("ËÎÌו", 28);
+			Brush b = new SolidBrush(Color.DarkOrange);
+			g.DrawString(str, f, b, bx, by);
+		}
 		static int CalcCoordX(int width, int word, int idx)
 		{
 			return idx % width * word;
@@ -50,6 +56,7 @@ namespace Example
 				x = CalcCoordX(6, 40, i);
 				y = CalcCoordY(6, 40, i);
 				DrawYellowBox(x, y, g);
+				DrawWord(x, y, g, str.Substring(i, 1));
 				images.Add((Image)img.Clone());
 				g = Graphics.FromImage(img);
 			}
