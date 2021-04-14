@@ -45,20 +45,27 @@ namespace Example
 		{
 			return idx / width * word;
 		}
-		static void GenImages(String str, String imageFile, List<Image> images)
+
+		static Image DrawImage(Image img, String s, int i)
 		{
 			int x, y;
-			Image img;
-			img = Image.FromFile(imageFile);
 			Graphics g = Graphics.FromImage(img);
+			x = CalcCoordX(6, 40, i);
+			y = CalcCoordY(6, 40, i);
+			DrawYellowBox(x, y, g);
+			DrawWord(x, y, g, s.Substring(i, 1));
+			return img;
+		}
+		static void GenImages(String str, String imageFile, List<Image> images)
+		{
+
+			Image imgSrc;
+			imgSrc = Image.FromFile(imageFile);
+			
 			for (int i = 0; i < str.Length; ++i) 
 			{
-				x = CalcCoordX(6, 40, i);
-				y = CalcCoordY(6, 40, i);
-				DrawYellowBox(x, y, g);
-				DrawWord(x, y, g, str.Substring(i, 1));
-				images.Add((Image)img.Clone());
-				g = Graphics.FromImage(img);
+				// images.Add((Image)DrawImage((Image)imgSrc.Clone(), str, i).Clone());
+				images.Add((Image)DrawImage(imgSrc, str, i).Clone());
 			}
 		}
 
