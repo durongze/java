@@ -3,9 +3,10 @@
 
 #include <stdio.h>
 
-#define JAVA_HOME "D:\\Program Files\\Java\\jre1.8.0_60"
+// #define JAVA_HOME "D:\\Program Files\\Java\\jre1.8.0_60"
+#define JAVA_HOME "D:\\Program Files\\Java\\jdk-12.0.2"
 #define JVM_DLL JAVA_HOME "\\bin\\server\\" "jvm.dll"
-
+#define CLASSPATH  JAVA_HOME "\\jre\\lib"
 #ifdef __cplusplus
 #if __cplusplus
 extern "C" {
@@ -20,18 +21,18 @@ extern "C" {
 		JNIEnv *penv = NULL;
 		JavaVMOption options[4];
 		options[0].optionString = "-Djava.compiler=NONE";
-		options[1] = { "-Djava.class.path=.;D:\\Program Files\\Java\\jre1.8.0_60\\lib\\dt.jar;D:\\Program Files\\Java\\jre1.8.0_60\\lib\\tools.jar", NULL };
+		options[1].optionString = { "-Djava.class.path=.;" CLASSPATH ";" };
 		options[2].optionString = "-verbose:NONE";
 		options[3].optionString = "-XX:+CreateMinidumpOnCrash";
-		JavaVMInitArgs args = { JNI_VERSION_1_8, 4, options, JNI_TRUE };
+		JavaVMInitArgs args = { JNI_VERSION_10, 4, options, JNI_TRUE };
 		char *jvmDll = JVM_DLL;
-		HMODULE hmod = LoadLibraryA("D:\\Program Files\\Java\\jre1.8.0_60\\bin\\server\\jvm.dll");
+		HMODULE hmod = LoadLibraryA(JVM_DLL);
 		JNICreateJavaVM pJNICreateJavaVM = (JNICreateJavaVM)GetProcAddress(hmod, "JNI_CreateJavaVM");
-		JNIGetCreatedJavaVMs pJNIGetCreateJavaVMs = (JNIGetCreatedJavaVMs)GetProcAddress(hmod, "JNI_GetCreatedJavaVMs");
-		JavaVM *pvms[32] = { 0 };
-		jsize pvmsnum = 0;
-		status = pJNIGetCreateJavaVMs(pvms, sizeof(pvms), &pvmsnum);
-		status = pJNICreateJavaVM(&pvm, (void**)&penv, (void*)&args);
+		// JNIGetCreatedJavaVMs pJNIGetCreateJavaVMs = (JNIGetCreatedJavaVMs)GetProcAddress(hmod, "JNI_GetCreatedJavaVMs");
+		// JavaVM *pvms[32] = { 0 };
+		// jsize pvmsnum = 0;
+		// status = pJNIGetCreateJavaVMs(pvms, sizeof(pvms), &pvmsnum);
+		status = (*pJNICreateJavaVM)(&pvm, (void**)&penv, (void*)&args);
 		if (status == JNI_ERR) {
 			return 0;
 		}
@@ -60,6 +61,8 @@ extern "C" {
 		penv->ReleaseStringUTFChars(retStr, 0);
 
 		pvm->DestroyJavaVM();
+		printf("press any key");
+		getchar();
 	}
 
 #ifdef __cplusplus
