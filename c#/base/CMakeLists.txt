@@ -26,20 +26,18 @@ add_executable(BaseThr ${BASE_THR_SRC})
 add_executable(BaseCli ${BASE_CLI_SRC})
 add_executable(BaseSvr ${BASE_SVR_SRC})
 add_executable(BaseProc ${BASE_PROC_SRC})
+
 # Set the .NET Framework version for the executable.
-set_property(TARGET BaseApp PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
-set_property(TARGET BaseThr PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
-set_property(TARGET BaseCli PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
-set_property(TARGET BaseSvr PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
-set_property(TARGET BaseProc PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
+set (ALL_PROJ BaseApp BaseThr BaseCli BaseSvr BaseProc) 
+foreach(subproj ${ALL_PROJ})
+    set_property(TARGET ${subproj} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
+endforeach()
 
 # Set the executable to be 32-bit.
 # set_property(TARGET libMyDll PROPERTY WIN32_EXECUTABLE TRUE)
-set_property(TARGET BaseApp PROPERTY WIN32_EXECUTABLE TRUE)
-set_property(TARGET BaseThr PROPERTY WIN32_EXECUTABLE TRUE)
-set_property(TARGET BaseCli PROPERTY WIN32_EXECUTABLE TRUE)
-set_property(TARGET BaseSvr PROPERTY WIN32_EXECUTABLE TRUE)
-set_property(TARGET BaseProc PROPERTY WIN32_EXECUTABLE TRUE)
+foreach(subproj ${ALL_PROJ})
+    set_property(TARGET ${subproj} PROPERTY WIN32_EXECUTABLE TRUE)
+endforeach()
 
 # Set the C# language version (defaults to 3.0).
 set(CMAKE_CSharp_FLAGS "/langversion:latest")
@@ -61,48 +59,15 @@ set_property(TARGET libMyDll PROPERTY VS_DOTNET_REFERENCES
     "System.Windows.Forms"
 )
 
-set_property(TARGET BaseApp PROPERTY VS_DOTNET_REFERENCES
-    "Microsoft.CSharp"
-    "System"
-    "System.Core"
-    "System.Data"
-    "System.Drawing"
-    "System.Windows.Forms"
-)
+foreach(subproj ${ALL_PROJ})
+    set_property(TARGET ${subproj} PROPERTY VS_DOTNET_REFERENCES
+        "Microsoft.CSharp"
+        "System"
+        "System.Core"
+        "System.Data"
+        "System.Drawing"
+        "System.Windows.Forms"
+    )
+endforeach()
 
-set_property(TARGET BaseThr PROPERTY VS_DOTNET_REFERENCES
-    "Microsoft.CSharp"
-    "System"
-    "System.Core"
-    "System.Data"
-    "System.Drawing"
-    "System.Windows.Forms"
-)
-
-set_property(TARGET BaseCli PROPERTY VS_DOTNET_REFERENCES
-    "Microsoft.CSharp"
-    "System"
-    "System.Core"
-    "System.Data"
-    "System.Drawing"
-    "System.Windows.Forms"
-)
-
-set_property(TARGET BaseSvr PROPERTY VS_DOTNET_REFERENCES
-    "Microsoft.CSharp"
-    "System"
-    "System.Core"
-    "System.Data"
-    "System.Drawing"
-    "System.Windows.Forms"
-)
-
-set_property(TARGET BaseProc PROPERTY VS_DOTNET_REFERENCES
-    "Microsoft.CSharp"
-    "System"
-    "System.Core"
-    "System.Data"
-    "System.Drawing"
-    "System.Windows.Forms"
-)
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/Release")
