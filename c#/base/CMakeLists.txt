@@ -27,7 +27,11 @@ add_executable(BaseCli ${BASE_CLI_SRC})
 add_executable(BaseSvr ${BASE_SVR_SRC})
 add_executable(BaseProc ${BASE_PROC_SRC})
 # Set the .NET Framework version for the executable.
-# set_property(TARGET BaseApp PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
+set_property(TARGET BaseApp PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
+set_property(TARGET BaseThr PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
+set_property(TARGET BaseCli PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
+set_property(TARGET BaseSvr PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
+set_property(TARGET BaseProc PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
 
 # Set the executable to be 32-bit.
 # set_property(TARGET libMyDll PROPERTY WIN32_EXECUTABLE TRUE)
