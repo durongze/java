@@ -300,4 +300,5 @@ class LZWEncoder {
 			flush_char(outs);
 		}
 	}
+	public static void main(String[] args) {}
 }

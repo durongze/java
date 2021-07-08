@@ -541,4 +541,5 @@ public class AnimatedGifEncoder {
 			out.write((byte) s.charAt(i));
 		}
 	}
+	public static void main(String[] args) {}
 }

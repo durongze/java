@@ -456,4 +456,5 @@ public class NeuQuant {
 		bias[bestpos] -= betagamma;
 		return (bestbiaspos);
 	}
+	public static void main(String[] args) {}
 }

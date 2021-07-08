@@ -772,4 +772,5 @@ public class GifDecoder {
 			readBlock();
 		} while ((blockSize > 0) && !err());
 	}
+	public static void main(String[] args) {}
 }

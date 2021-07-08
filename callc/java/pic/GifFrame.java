@@ -14,4 +14,5 @@ public class GifFrame {
     }
     public BufferedImage image;
     public int delay;
+    public static void main(String[] args) {}
 }
