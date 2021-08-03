@@ -1,5 +1,7 @@
 package mypkg;
 
+import mypkg.DRZLZWEncoder;
+
 import java.io.*;
 
 /**
@@ -25,7 +27,7 @@ import java.io.*;
  * @version 1.03 November 2003
  *
  */
-public class AnimatedGIFEncoder {
+public class AnimatedGifEncoder {
     protected int width; // image size
 
     protected int height;

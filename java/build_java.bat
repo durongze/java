@@ -5,7 +5,7 @@ rem set CLASSPATH=%JAVA_HOME%\lib;%JAVA_HOME%\lib\jrt-fs.jar;.
 rem set PATH=%PATH%;%JAVA_HOME%\bin
 set JAVA_HOME=D:\Program Files\Java\jdk-12.0.2
 set PATH=%PATH%;%JAVA_HOME%\bin;
-set CLASSHOME=%JAVA_HOME%\lib;%JAVA_HOME%\jre\lib\jrt-fs.jar;.
+set CLASSPATH=%JAVA_HOME%\lib;%JAVA_HOME%\jre\lib\jrt-fs.jar;.
 
 set base_dir=pic\
 set pkg_name=mypkg
