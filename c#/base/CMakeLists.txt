@@ -5,8 +5,8 @@ project("BaseApp" CSharp)
 set(BASE_SRC_DIR ${PROJECT_SOURCE_DIR} CACHE STRING "BASE_SRC_DIR.")
 
 #set(NET_VER_DIR "net35" CACHE STRING "BASE_SRC_DIR.")
-set(NET_VER_DIR "net40" CACHE STRING "BASE_SRC_DIR.")
-#set(NET_VER_DIR "net45" CACHE STRING "BASE_SRC_DIR.")
+#set(NET_VER_DIR "net40" CACHE STRING "BASE_SRC_DIR.")
+set(NET_VER_DIR "net45" CACHE STRING "BASE_SRC_DIR.")
 #set(NET_VER_DIR "netstandard2.0" CACHE STRING "BASE_SRC_DIR.")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDYZ_DBG")
@@ -30,13 +30,18 @@ add_executable(BaseProc ${BASE_PROC_SRC})
 # Set the .NET Framework version for the executable.
 set (ALL_PROJ BaseApp BaseThr BaseCli BaseSvr BaseProc) 
 foreach(subproj ${ALL_PROJ})
-    set_property(TARGET ${subproj} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
+    set_property(TARGET ${subproj} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.5")
 endforeach()
 
 # Set the executable to be 32-bit.
 # set_property(TARGET libMyDll PROPERTY WIN32_EXECUTABLE TRUE)
 foreach(subproj ${ALL_PROJ})
-    set_property(TARGET ${subproj} PROPERTY WIN32_EXECUTABLE TRUE)
+    if ("${subproj}" STREQUAL "BaseApp")
+        set_property(TARGET ${subproj} PROPERTY WIN32_EXECUTABLE TRUE)
+    else()
+        # don't forget to set start object
+        set_property(TARGET ${subproj} PROPERTY WIN32_EXECUTABLE FALSE)
+    endif()
 endforeach()
 
 # Set the C# language version (defaults to 3.0).
@@ -50,16 +55,8 @@ set(CMAKE_CSharp_FLAGS "/langversion:latest")
 # set_property(TARGET BaseApp PROPERTY VS_DOTNET_REFERENCE_my lib/${NET_VER_DIR}/my.dll)
 
 # Add in the .NET reference libraries.
-set_property(TARGET libMyDll PROPERTY VS_DOTNET_REFERENCES
-    "Microsoft.CSharp"
-    "System"
-    "System.Core"
-    "System.Data"
-    "System.Drawing"
-    "System.Windows.Forms"
-)
-
-foreach(subproj ${ALL_PROJ})
+foreach(subproj ${ALL_PROJ} libMyDll)
+    message("subproj ${subproj}")
     set_property(TARGET ${subproj} PROPERTY VS_DOTNET_REFERENCES
         "Microsoft.CSharp"
         "System"

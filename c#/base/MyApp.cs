@@ -13,6 +13,9 @@ namespace MyApplication
 {
     class MyApp:Form
     {
+        public const byte vbKeyControl = 0x11;
+        public const byte vbKeyAlt = 18;
+        public const byte vbKeyZ = 90;
         private PictureBox pb;
         private RichTextBox tb;
         private Button btn;
@@ -29,6 +32,9 @@ namespace MyApplication
         public static extern int GetModuleHandleA(string name);
         [DllImport("kernel32.dll")]
         public static extern int CreateRemoteThread(IntPtr hwnd, int attrib, int size, int address, int par, int flags, int threadid);
+        [DllImport("user32.dll")]
+        public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
+        public delegate void BoilerLogHandler(string status);
         public MyApp() 
         {
             this.SuspendLayout();
@@ -49,10 +55,27 @@ namespace MyApplication
         public void ProcTimer(object source, System.Timers.ElapsedEventArgs e)
         {
             Graphics g = Graphics.FromImage(pb.Image);
-            Font f = new Font("Times New Roman", 62, FontStyle.Italic);
-            Brush b = new SolidBrush(Color.Purple);
-            Point p = pb.Location; // new Point(150,150);
+            Font f = new Font("Times New Roman", 22, FontStyle.Italic);
+            Brush b = new SolidBrush(Color.Green);
+            Point p = new Point(150, 250);
             g.DrawString(System.DateTime.Now.ToString(), f, b, p);
+            // KeyPicBox();
+        }
+
+        private void KeyPicBox()
+        {
+            // 模拟按下ctrl键
+            keybd_event(vbKeyControl, 0, 0, 0);
+            // 模拟按下Alt键
+            keybd_event(vbKeyAlt, 0, 0, 0);
+            // 模拟按下Z键
+            keybd_event(vbKeyZ, 0, 0, 0);
+            // 模拟松开ctrl键
+            keybd_event(vbKeyControl, 0, 2, 0);
+            // 模拟松开Alt键
+            keybd_event(vbKeyAlt, 0, 2, 0);
+            // 模拟松开Z键
+            keybd_event(vbKeyZ, 0, 2, 0);
         }
 
         private void InitGroupBox()
@@ -85,7 +108,6 @@ namespace MyApplication
         {
             AllProcess();
             pb.Refresh();
-            
         }
         private void InitButton(GroupBox gb)
         {
@@ -116,12 +138,12 @@ namespace MyApplication
             int ret = 0;
             Process[] myProc = Process.GetProcesses();
             for (int i = 0; i < myProc.Length; ++i) {
-                if (myProc[i].ProcessName.Contains("App")) 
+                if (myProc[i].ProcessName.Contains("BaseApp")) 
                 {
                     tb.Text = (myProc[i].ProcessName + ":" + myProc[i].Id + ":" + myProc[i].Handle + "\n");
                     AllModules(myProc[i]);
                     ret = Injection(myProc[i], "libMyDll.dll");
-                    tb.Text = ret.ToString();
+                    tb.Text += ret.ToString();
                 }
             }
             return 0;
