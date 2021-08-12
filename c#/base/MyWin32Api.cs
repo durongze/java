@@ -628,7 +628,7 @@ namespace WindowsAPI
             return unchecked((int)intPtr.ToInt64());
         }
 
-        internal unsafe delegate bool EnumChildrenCallbackVoid(IntPtr hwnd, void* lParam);
+        internal delegate bool EnumChildrenCallbackVoid(IntPtr hwnd, IntPtr lParam);
 
         [StructLayout (LayoutKind.Sequential)]
         internal struct MSG
@@ -1951,11 +1951,34 @@ namespace WindowsAPI
 
         internal const int TTF_IDISHWND = 0x0001;
         internal delegate bool EnumThreadWindowsCallback(IntPtr hWnd, IntPtr lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern bool PhysicalToLogicalPoint(IntPtr hwnd, ref IntPtr pt);
+
+
+
+        public const int VK_SHIFT = 0x10;
+        public const int VK_CONTROL = 0x11;
+        public const int VK_MENU = 0x12;
+
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern int SendInput(int nInputs, INPUT[] mi, int cbSize);
+
+
+
+        [DllImport("user32.dll")]
+        public static extern void SwitchToThisWindow(IntPtr hwnd, bool fAltTab);
+
     }
 
     class MyWin32Api
     {
         #region User32.dll 函数
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        static extern bool EnumChildWindows(IntPtr hwndParent, NativeMethods.EnumChildrenCallbackVoid lpEnumFunc, IntPtr lParam);
+
         [DllImport("user32.dll", CharSet=CharSet.Auto)]
         [ResourceExposure(ResourceScope.None)]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
@@ -2347,12 +2370,34 @@ namespace WindowsAPI
             StringBuilder name = new StringBuilder(255);
             // MyWin32Api.GetProcessImageFileNameW(hWnd, name, name.Length);
             MyWin32Api.GetWindowText(hWnd, name, name.Capacity);
-            if (name.ToString().Contains("WeLink")) {
+            if (name.ToString().Contains("QQ")) {
                 ProcWindow(hWnd);
-                MyWin32Api.MoveWindow(hWnd, 100, 100, 444, 444, true);
+                RECT rect = new RECT();
+                MyWin32Api.GetWindowRect(hWnd, ref rect);
+                MyWin32Api.MoveWindow(hWnd, 1, 1, 444,444, true);
             } else {
                 // ShowWindow(hWnd);
             }
+            return true;
+        }
+
+        static int AutoLogin(IntPtr hwndTX)
+        {
+            NativeMethods.INPUT[] input = new NativeMethods.INPUT[4];
+            SetForegroundWindow(hwndTX);
+            input[0].type = input[1].type = input[2].type = input[3].type = NativeMethods.INPUT_KEYBOARD;
+            input[0].union.keyboardInput.wVk = input[2].union.keyboardInput.wVk = NativeMethods.VK_MENU;
+            input[1].union.keyboardInput.wVk = input[3].union.keyboardInput.wVk = 0x53;
+            input[2].union.keyboardInput.dwFlags = input[3].union.keyboardInput.dwFlags = NativeMethods.KEYEVENTF_KEYUP;
+            NativeMethods.SendInput(4, input, input.Length * 56);
+            Console.WriteLine("SendInput");
+            return 0;
+        }
+        static bool ChildrenCallback(IntPtr hwnd, IntPtr lParam)
+        {
+            // AutoLogin(myProc[i].Handle);
+            ShowWindow(hwnd);
+            AutoLogin(hwnd);
             return true;
         }
         static void ProcMain()
@@ -2360,22 +2405,26 @@ namespace WindowsAPI
             IntPtr extraData = new IntPtr();
             MyWin32Api.EnumWindows(ThreadWindowsCallback, extraData);
             // GetMember(myProc[0]);
-            IntPtr handle = MyWin32Api.FindWindow(null, "git.txt - 记事本");
+            IntPtr handle = MyWin32Api.FindWindow(null, "QQ");
             ShowWindow(handle);
-            MyWin32Api.MoveWindow(handle, 100, 100, 444, 444, true);
+            RECT rect = new RECT();
+            MyWin32Api.GetWindowRect(handle, ref rect);
+            MyWin32Api.MoveWindow(handle, 1, 1, 444, 444, true);
+            EnumChildWindows(handle, ChildrenCallback, handle);
         }
 
         static void Main(string[] args)
         {
             Process[] myProc = Process.GetProcesses();
             for (int i = 0; i < myProc.Length; ++i) {
-                if (myProc[i].ProcessName.Contains("WeLink")) 
+                if (myProc[i].ProcessName.Contains("QQ")) 
                 {
                     Console.WriteLine(myProc[i].ProcessName + ":");
-                    // Console.WriteLine();
+                    
                 }
             }
             ProcMain();
+            Console.ReadKey();
         }
     }
 }
