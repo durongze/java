@@ -31,7 +31,7 @@ function ExecuteClass()
         echo ObjFile: ${ObjFile}
         ObjFile=${ObjFile%*.class}
         ObjFile=$(echo ${ObjFile} | tr -s "/" ".")
-        echo "java ${ObjFile}"
+        echo -e "\033[32m java ${ObjFile} \033[0m"
         java ${ObjFile}
     done
 }

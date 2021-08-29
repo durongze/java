@@ -15,6 +15,29 @@ import javax.imageio.ImageIO;
  
 public class MakeOver {
  
+    public static String[] GetFileList(String dir)
+    {
+        File file = new File(dir);
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            String[] fileList = new String[files.length];
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory()) {
+                    System.out.println("Dirs[" + i + "]：" + files[i].getPath());
+                } else {
+                    System.out.println("File[" + i + "]：" + files[i].getPath());
+                    fileList[i] = files[i].getPath();
+                }
+            }
+            return fileList;
+        } else {
+            String[] fileList = new String[1];
+            fileList[0] = file.getPath();
+            System.out.println("File：" + file.getPath());
+            return fileList;
+        }
+    }
+
     public static final void main(String[] args) throws Exception{
 
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
@@ -22,14 +45,11 @@ public class MakeOver {
         encoder.setDelay(1000);
         encoder.setRepeat(1000);
         encoder.setTransparent(0xffffff);
-
-        String[] inputs = new String[]{
-                "res/1.png",
-                "res/2.png",
-                "res/3.png"
-        };
+        
+        String[] inputs = GetFileList("res");
         for( String input : inputs ) {
-            System.out.println(input);
+            if (input == null) continue;
+            System.out.println("input:" + input);
             InputStream inputStream = MakeOver.class.getResourceAsStream(input);
             try {
                 BufferedImage image = ImageIO.read(inputStream);
