@@ -1,7 +1,5 @@
 package mypkg;
 
-import mypkg.DRZLZWEncoder;
-
 import java.io.*;
 
 /**

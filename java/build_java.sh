@@ -46,7 +46,7 @@ if [[ -f mypkg ]] || [[ -d mypkg ]] ;then
     echo "mypkg"
 fi
 
-export Srcs=$(ls pic/*.java)
+export Srcs=$(ls pic/*.java test/*AnimatedGifEncoder.java)
 
 CompileJava "${Srcs}"
 

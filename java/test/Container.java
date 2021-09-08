@@ -3,7 +3,7 @@ package com.durongze;
 import java.io.*;
 import java.util.*;
 
-public Container{
+public class Container{
     // Iterator <---------------------------Collection <------------------------Map     
     //    ^                                      |                               |      
     //    |                                -------------                       -----    

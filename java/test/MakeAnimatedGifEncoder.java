@@ -13,7 +13,7 @@ import java.io.OutputStream;
 import javax.imageio.ImageIO;
  
  
-public class MakeOver {
+public class MakeAnimatedGifEncoder {
  
     public static String[] GetFileList(String dir)
     {
@@ -41,7 +41,7 @@ public class MakeOver {
     public static final void main(String[] args) throws Exception{
 
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
-        encoder.start("testout.gif");
+        encoder.start("MakeAnimatedGifEncoder.gif");
         encoder.setDelay(1000);
         encoder.setRepeat(1000);
         encoder.setTransparent(0xffffff);
