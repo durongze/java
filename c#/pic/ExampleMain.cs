@@ -121,12 +121,12 @@ namespace Example
 		{
 			List<Image> images = new List<Image>();
 			Console.WriteLine("GenImages. pwd:" + System.IO.Directory.GetCurrentDirectory());
-			// int ret = GenImages("durongze", "res/00.png", images);
-			// if (ret != 0) {
-			//	return ;
-			// }
-			string [] PngFiles = GetAllFile("res");
-			LoadImages(PngFiles, images);
+			int ret = GenImages("durongze", "res/00.png", images);
+			if (ret != 0) {
+				return ;
+			}
+			// string [] PngFiles = GetAllFile("res");
+			// LoadImages(PngFiles, images);
 			EncGifFile(images, "res/out.gif");
 		}
 	}

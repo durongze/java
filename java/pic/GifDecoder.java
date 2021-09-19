@@ -1,6 +1,5 @@
 package mypkg;
 
-import mypkg.GifFrame;
 import java.net.*;
 import java.io.*;
 import java.util.*;
