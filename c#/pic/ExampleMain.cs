@@ -1,8 +1,9 @@
-using System;
+ï»¿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Collections.Generic;
+using System.Reflection;
 using Gif.Components;
 
 namespace Example
@@ -33,7 +34,7 @@ namespace Example
 
 		static void DrawWord(int bx, int by, Graphics g, String str)
 		{
-			Font f = new Font("ËÎÌå", 28);
+			Font f = new Font("ï¿½ï¿½ï¿½ï¿½", 28);
 			Brush b = new SolidBrush(Color.DarkOrange);
 			g.DrawString(str, f, b, bx, by);
 		}
@@ -56,10 +57,19 @@ namespace Example
 			DrawWord(x, y, g, s.Substring(i, 1));
 			return img;
 		}
-		static void GenImages(String str, String imageFile, List<Image> images)
-		{
 
+		static string[] GetAllFile(string path) 
+		{
+			string[] files = Directory.GetFiles(path, "*.png");
+			return files;
+		}
+		static int GenImages(String str, String imageFile, List<Image> images)
+		{
 			Image imgSrc;
+			if (!File.Exists(imageFile)) {
+				Console.WriteLine(imageFile + " does not exist. pwd:" + System.IO.Directory.GetCurrentDirectory());
+				return -1;
+			}
 			imgSrc = Image.FromFile(imageFile);
 			
 			for (int i = 0; i < str.Length; ++i) 
@@ -67,6 +77,7 @@ namespace Example
 				// images.Add((Image)DrawImage((Image)imgSrc.Clone(), str, i).Clone());
 				images.Add((Image)DrawImage(imgSrc, str, i).Clone());
 			}
+			return 0;
 		}
 
 		static void LoadImages(String[] imageFiles, List<Image> images)
@@ -109,7 +120,13 @@ namespace Example
 		static void Main(string[] args)
 		{
 			List<Image> images = new List<Image>();
-			GenImages("durongze", "res/00.png", images);
+			Console.WriteLine("GenImages. pwd:" + System.IO.Directory.GetCurrentDirectory());
+			// int ret = GenImages("durongze", "res/00.png", images);
+			// if (ret != 0) {
+			//	return ;
+			// }
+			string [] PngFiles = GetAllFile("res");
+			LoadImages(PngFiles, images);
 			EncGifFile(images, "res/out.gif");
 		}
 	}
