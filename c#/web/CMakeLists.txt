@@ -35,6 +35,8 @@ target_link_libraries(Web WebDriver WebDriver.Support Selenium.WebDriverBackedSe
 set_property(TARGET Web PROPERTY VS_DOTNET_REFERENCE_Selenium.WebDriverBackedSelenium lib/${NET_VER_DIR}/Selenium.WebDriverBackedSelenium.dll)
 set_property(TARGET Web PROPERTY VS_DOTNET_REFERENCE_WebDriver lib/${NET_VER_DIR}/WebDriver.dll)
 set_property(TARGET Web PROPERTY VS_DOTNET_REFERENCE_WebDriver.Support lib/${NET_VER_DIR}/WebDriver.Support.dll)
+set_property(TARGET Web PROPERTY VS_DOTNET_REFERENCE_JavaScriptEngineSwitcher.Core lib/${NET_VER_DIR}/JavaScriptEngineSwitcher.Core.dll)
+set_property(TARGET Web PROPERTY VS_DOTNET_REFERENCE_JavaScriptEngineSwitcher.ChakraCore lib/${NET_VER_DIR}/JavaScriptEngineSwitcher.ChakraCore.dll)
 
 # Add in the .NET reference libraries.
 set_property(TARGET Web PROPERTY VS_DOTNET_REFERENCES

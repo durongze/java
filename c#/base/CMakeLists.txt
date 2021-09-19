@@ -20,15 +20,20 @@ file(GLOB BASE_CLI_SRC "TcpClient.cs")
 file(GLOB BASE_SVR_SRC "TcpServer.cs")
 file(GLOB BASE_PROC_SRC "MyProcess.cs")
 
+file(GLOB BASE_QQ_SRC "MyQQ.cs")
+file(GLOB BASE_MyWin_SRC "MyWin32Api.cs")
+
 add_library(libMyDll STATIC ${BASE_DLL_SRC})
 add_executable(BaseApp ${BASE_APP_SRC} ${BASE_DLL_SRC})
 add_executable(BaseThr ${BASE_THR_SRC})
 add_executable(BaseCli ${BASE_CLI_SRC})
 add_executable(BaseSvr ${BASE_SVR_SRC})
 add_executable(BaseProc ${BASE_PROC_SRC})
+add_executable(BaseQQ ${BASE_QQ_SRC})
+add_executable(BaseWin ${BASE_MyWin_SRC})
 
 # Set the .NET Framework version for the executable.
-set (ALL_PROJ BaseApp BaseThr BaseCli BaseSvr BaseProc) 
+set (ALL_PROJ BaseApp BaseThr BaseCli BaseSvr BaseProc BaseQQ BaseWin) 
 foreach(subproj ${ALL_PROJ})
     set_property(TARGET ${subproj} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.5")
 endforeach()

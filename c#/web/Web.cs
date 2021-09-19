@@ -55,9 +55,10 @@ class Web{
     public static void Main(string[] args) {
         Console.WriteLine("Main");
         // Web wc = new Web();
-        TsDownload wc = new TsDownload();
+        // TsDownload wc = new TsDownload();
+        PdfDownload wc = new PdfDownload();
         wc.GetWebPage();
-        wc.FindElementById("lelevideo");
+        wc.FindElementByClassName("img-page");
         return;
     }
 }
