@@ -34,8 +34,8 @@ namespace Example
 
 		static void DrawWord(int bx, int by, Graphics g, String str)
 		{
-			Font f = new Font("����", 28);
-			Brush b = new SolidBrush(Color.DarkOrange);
+			Font f = new Font("Monospace", 28);
+			Brush b = new SolidBrush(Color.Red);
 			g.DrawString(str, f, b, bx, by);
 		}
 		static int CalcCoordX(int width, int word, int idx)
@@ -51,8 +51,8 @@ namespace Example
 		{
 			int x, y;
 			Graphics g = Graphics.FromImage(img);
-			x = CalcCoordX(6, 40, i);
-			y = CalcCoordY(6, 40, i);
+			y = CalcCoordX(6, 40, i);
+			x = CalcCoordY(6, 40, i);
 			DrawYellowBox(x, y, g);
 			DrawWord(x, y, g, s.Substring(i, 1));
 			return img;
@@ -75,6 +75,7 @@ namespace Example
 			for (int i = 0; i < str.Length; ++i) 
 			{
 				// images.Add((Image)DrawImage((Image)imgSrc.Clone(), str, i).Clone());
+				Console.WriteLine(imageFile + " add " + str.Substring(i, 1));
 				images.Add((Image)DrawImage(imgSrc, str, i).Clone());
 			}
 			return 0;
