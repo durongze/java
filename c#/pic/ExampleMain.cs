@@ -34,8 +34,8 @@ namespace Example
 
 		static void DrawWord(int bx, int by, Graphics g, String str)
 		{
-			Font f = new Font("����", 28);
-			Brush b = new SolidBrush(Color.DarkOrange);
+			Font f = new Font("宋体", 14);
+			Brush b = new SolidBrush(Color.Red);
 			g.DrawString(str, f, b, bx, by);
 		}
 		static int CalcCoordX(int width, int word, int idx)
@@ -51,10 +51,10 @@ namespace Example
 		{
 			int x, y;
 			Graphics g = Graphics.FromImage(img);
-			x = CalcCoordX(6, 40, i);
-			y = CalcCoordY(6, 40, i);
-			DrawYellowBox(x, y, g);
-			DrawWord(x, y, g, s.Substring(i, 1));
+			x = CalcCoordX(20, 40, 0);
+			y = CalcCoordY(20, 40, 0);
+			// DrawYellowBox(x, y, g);
+			DrawWord(x, y, g, s);
 			return img;
 		}
 
@@ -75,7 +75,20 @@ namespace Example
 			for (int i = 0; i < str.Length; ++i) 
 			{
 				// images.Add((Image)DrawImage((Image)imgSrc.Clone(), str, i).Clone());
-				images.Add((Image)DrawImage(imgSrc, str, i).Clone());
+				String word = str.Substring(i, 1);
+				Console.WriteLine(imageFile + " add " + word);
+				images.Add((Image)DrawImage(imgSrc, word, i).Clone());
+			}
+			return 0;
+		}
+
+		static int FixImages(String str, List<Image> images)
+		{			
+			for (int i = 0; i < images.Count; ++i) 
+			{
+				String substr = str.Substring(0, (int)((i + 1) * (1.0 * str.Length / images.Count)));
+				Console.WriteLine(" fix " + substr);
+				DrawImage(images[i], substr, i);
 			}
 			return 0;
 		}
@@ -110,10 +123,13 @@ namespace Example
 		{
 			GifDecoder gifDecoder = new GifDecoder();
 			gifDecoder.Read(gifFile);
-			for (int i = 0, count = gifDecoder.GetFrameCount(); i < count; i++)
+			int count = gifDecoder.GetFrameCount();
+			Console.WriteLine(" DecGifFile count:" + count);
+			for (int i = 0; i < count; i++)
 			{
 				Image frame = gifDecoder.GetFrame(i);  // frame i
-				frame.Save(outputPath + Guid.NewGuid().ToString() + ".png", ImageFormat.Png);
+				String frameName = String.Format("{0:0000}", i); // Guid.NewGuid().ToString();
+				frame.Save(outputPath + frameName + ".png", ImageFormat.Png);
 			}
 		}
 		[STAThread]
@@ -121,13 +137,21 @@ namespace Example
 		{
 			List<Image> images = new List<Image>();
 			Console.WriteLine("GenImages. pwd:" + System.IO.Directory.GetCurrentDirectory());
-			int ret = GenImages("durongze", "res/00.png", images);
+			String text = "test";
+#if xxx			
+			int ret = GenImages(text, "res/01.png", images);
 			if (ret != 0) {
 				return ;
 			}
-			// string [] PngFiles = GetAllFile("res");
-			// LoadImages(PngFiles, images);
+#else
+			string [] PngFiles = GetAllFile("res");
+			LoadImages(PngFiles, images);
+			FixImages(text, images);
+#endif
 			EncGifFile(images, "res/out.gif");
+
+			// DecGifFile("res/jiuwa.gif", "res/");
+
 		}
 	}
 }

@@ -12,22 +12,22 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class Web 
 {
     WebDriver iebw = null;
-	String browser = "E:/Program Files/Google/Chrome/Application/chrome.exe";
+	String browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe";
     String url = "http://www.baidu.com";
 	String kw = "kw";
     String btn = "su";
     String searchKw = "duyongze";
     public Web()
     {
-        // iebw = new InternetExplorerDriver();
+        iebw = new InternetExplorerDriver();
 
 		// ChromeOptions options = new ChromeOptions();
 		// options.addArguments("disable-infobars");
 		// options.setBinary(browser);
-		//// System.setProperty("webdriver.chrome.driver", "C:/Windows");
+		// System.setProperty("webdriver.chrome.driver", "C:/Windows/chromedriver.exe");
 		// iebw = new ChromeDriver(options);
         
-        iebw = new FirefoxDriver();
+        // iebw = new FirefoxDriver();
 		iebw.manage().window().maximize();
 		
     }

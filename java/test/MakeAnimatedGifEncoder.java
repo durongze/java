@@ -50,7 +50,7 @@ public class MakeAnimatedGifEncoder {
         for( String input : inputs ) {
             if (input == null) continue;
             System.out.println("input:" + input);
-            InputStream inputStream = MakeOver.class.getResourceAsStream(input);
+            InputStream inputStream = MakeAnimatedGifEncoder.class.getResourceAsStream(input);
             try {
                 BufferedImage image = ImageIO.read(inputStream);
                 int[] pixels = new int[image.getWidth() * image.getHeight()];

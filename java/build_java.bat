@@ -86,7 +86,7 @@ goto:eof
     endlocal
 goto:eof
 
-:bat_file
+:set_all_file
     @rem del mypkg\*.class
     call:set_all_java m_srcs
     echo m_srcs %m_srcs%
@@ -107,15 +107,47 @@ goto:eof
     echo .
 goto :eof
 
-:bat_start
+:set_classpath
+    set proj_dir=%cd%\test\lib
+    setlocal ENABLEDELAYEDEXPANSION
+    set libjar=%CLASSPATH%;.
+    for /f %%i in ('dir /s /b "%proj_dir%\*.jar"') do (
+        set jar_file=%%i
+        set libjar=!libjar!;!jar_file!
+    )
+    echo libjar : %libjar%
+    endlocal & set "%~1=%libjar%"
+goto :eof
+
+:bat_main
+    set base_dir=%1
     call:color_text 4e "+++++++++++++++start+++++++++++++"
-    call:bat_file
+    call:set_all_file
 
     call:color_text 19 "+++++++++++++++compile srcs+++++++++++++"
     call:compile_java %m_srcs%
  
     call:color_text 2F "---------------execute srcs-------------"
     call:execute_java %m_srcs% 
+goto :eof
+
+:bat_test
+    pushd test\
+    call build_email.bat
+    call build_excel.bat
+    call build_file.bat
+    call build_web.bat
+    popd
+goto :eof
+
+:bat_start
+    call:bat_main pic\
+    @rem call:bat_main test\
+    call:color_text 2F "---------------class_path-------------"
+    call:set_classpath CLASSPATH
+    echo CLASSPATH:%class_path%
+    call:bat_main test\
+goto :eof
 
 :bat_end
     pause

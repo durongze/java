@@ -1,5 +1,6 @@
 package com.durongze;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,6 +36,15 @@ public class Excel
     public Excel (String fp)
     {
         filePath = fp;
+    }
+    public boolean Exists()
+    {
+        File file = new File(filePath);
+        if (file.exists()) {
+            return true;
+        }
+        System.out.println(filePath + " does not exists.");
+        return false;
     }
     public void ShowCell(Cell cell)
     {
@@ -103,6 +113,9 @@ public class Excel
     public static void main(String args[]) throws IOException 
     {
         Excel drzExcel = new Excel("d:/note.xlsx");
+        if (!drzExcel.Exists()) {
+            return ;
+        }
         drzExcel.WriteExcel();
         return ;
     }

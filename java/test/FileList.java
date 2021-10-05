@@ -34,9 +34,14 @@ public class FileList{
         InputStream in = new FileInputStream(f);
         byte[] data = new byte[(int)f.length()];
         try {
-            System.out.println("f size:" + f.length());
+            System.out.println("bin f size:" + f.length());
             in.read(data);
-            OutputStream out = new FileOutputStream(new File("d:\\xx.bin"), true);
+            File outFile = new File("d:\\xx.bin");
+            if (!outFile.exists()) {
+                System.out.println("outFile does not exist.");
+                return data;
+            }
+            OutputStream out = new FileOutputStream(outFile, true);
             // OutputStream out = new FileOutputStream(new File("d:\\xx.bin"));
             out.write(data);
             out.close();
@@ -51,9 +56,14 @@ public class FileList{
         InputStream in = new FileInputStream(f);
         byte[] data = new byte[(int)f.length()];
         try {
-            System.out.println("f size:" + f.length());
+            System.out.println("txt f size:" + f.length());
             in.read(data);
-            OutputStream out = new FileOutputStream(new File("d:\\xx.txt"), true);
+            File outFile = new File("d:\\xx.txt");
+            if (!outFile.exists()) {
+                System.out.println("outFile does not exist.");
+                return data;
+            }
+            OutputStream out = new FileOutputStream(outFile, true);
             // OutputStream out = new FileOutputStream(new File("d:\\xx.txt"));
             out.write(data);
             out.close();
@@ -76,7 +86,9 @@ public class FileList{
                 if (fext.contains(".txt")) {
                     byte[] ctx = ReadBinary(f);
                     File fileExt = new File(fext.replace(".txt", ".bin"));
-                    System.out.println(fileExt.getAbsolutePath());
+                    if (fileExt.exists()) {
+                        System.out.println(fileExt.getAbsolutePath());
+                    }                    
                 }
             } else if(f.isDirectory()) {
                 // System.out.println("dir:");

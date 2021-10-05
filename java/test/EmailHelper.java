@@ -74,7 +74,7 @@ public class EmailHelper {
 
         }
         // msg.send();
-        msg.save();
+        // msg.save();
     }
 
     /**
@@ -91,6 +91,9 @@ public class EmailHelper {
         String[] to = new String[]{"durongze@qq.com"};
         String cc = "duyongzeyx@qq.com";
         String content = "ctx";
+        System.out.println(subject);
+        System.out.println(cc);
+        System.out.println(content);
         eh.send(subject, to, to, content);
     }
 }

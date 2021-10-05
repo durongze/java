@@ -31,14 +31,29 @@ set all_jar=%all_jar%;%proj_dir%\lib\org.apache.commons.lang3_3.1.0.v20140328143
 set all_jar=%all_jar%;%proj_dir%\lib\ews-java-api.jar
 
 set PATH=%PATH%;%JAVA_HOME%\bin;
-javac -encoding utf-8 -d . -classpath %all_jar% %proj_name%.java
 
 set CLASSPATH=%CLASSPATH%;%all_jar%;
 
-mkdir com\durongze\
+:bat_start
+    javac -encoding utf-8 -d . -classpath %all_jar% %proj_name%.java
+    mkdir com\durongze\
+    move %proj_name%.class com/durongze/
+    call:color_text 4e "+++++++++++++++java+++++++++++++"
+    java com.durongze.%proj_name%
+goto :eof
 
-move %proj_name%.class com/durongze/
+:color_text
+    setlocal EnableDelayedExpansion
+    for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1) do rem"') do (
+        set "DEL=%%a"
+    )
+    echo off
+    <nul set /p ".=%DEL%" > "%~2"
+    findstr /v /a:%1 /R "^$" "%~2" nul
+    del "%~2" > nul 2>&1
+    endlocal
+    echo .
+goto :eof
 
-java com.durongze.%proj_name%
- 
+call:bat_start
 pause
