@@ -51,10 +51,10 @@ namespace Example
 		{
 			int x, y;
 			Graphics g = Graphics.FromImage(img);
-			x = CalcCoordX(20, 40, 0);
-			y = CalcCoordY(20, 40, 0);
-			// DrawYellowBox(x, y, g);
-			DrawWord(x, y, g, s);
+			y = CalcCoordX(6, 40, i);
+			x = CalcCoordY(6, 40, i);
+			DrawYellowBox(x, y, g);
+			DrawWord(x, y, g, s.Substring(i, 1));
 			return img;
 		}
 
