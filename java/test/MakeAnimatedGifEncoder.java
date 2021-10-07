@@ -38,6 +38,25 @@ public class MakeAnimatedGifEncoder {
         }
     }
 
+    public static void DecGifFile(String gifFile, String outputPath)
+    {
+        GifDecoder gifDecoder = new GifDecoder();
+        gifDecoder.read(gifFile);
+        int count = gifDecoder.getFrameCount();
+        System.out.println(" DecGifFile count:" + count);
+        for (int i = 0; i < count; i++)
+        {
+            BufferedImage frame = gifDecoder.getFrame(i);  // frame i
+            String frameName = String.format("{0:000}", i); // Guid.NewGuid().ToString();
+            File outputfile = new File(outputPath + "3" + frameName);
+            try {
+                ImageIO.write(frame, "png", outputfile);
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
     public static final void main(String[] args) throws Exception{
 
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
@@ -46,17 +65,23 @@ public class MakeAnimatedGifEncoder {
         encoder.setRepeat(1000);
         encoder.setTransparent(0xffffff);
         
-        String[] inputs = GetFileList("res");
+        String[] inputs = GetFileList("res/pos/");
         for( String input : inputs ) {
-            if (input == null) continue;
-            System.out.println("input:" + input);
+            if (input == null) { 
+                continue;
+            }
+            File fileExt = new File(input);
+            if (fileExt.exists()) {
+                System.out.println(fileExt.getAbsolutePath());
+            }
             InputStream inputStream = MakeAnimatedGifEncoder.class.getResourceAsStream(input);
             try {
                 BufferedImage image = ImageIO.read(inputStream);
                 int[] pixels = new int[image.getWidth() * image.getHeight()];
                 image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
                 encoder.addFrame(pixels, image.getWidth(), image.getHeight());
-            } finally {
+            } catch (Exception e) {
+                e.printStackTrace();
                 inputStream.close();
             }
         }
