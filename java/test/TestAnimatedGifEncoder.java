@@ -59,6 +59,25 @@ public class TestAnimatedGifEncoder {
         return files;
     }
 
+    public static void DecGifFile(String gifFile, String outputPath)
+    {
+        GifDecoder gifDecoder = new GifDecoder();
+        gifDecoder.read(gifFile);
+        int count = gifDecoder.getFrameCount();
+        System.out.println(" DecGifFile count:" + count);
+        for (int i = 0; i < count; i++)
+        {
+            BufferedImage frame = gifDecoder.getFrame(i);  // frame i
+            String frameName = String.format("{0:000}", i); // Guid.NewGuid().ToString();
+            File outputfile = new File(outputPath + "3" + frameName);
+            try {
+                ImageIO.write(frame, "png", outputfile);
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static final void main(String[] args) throws Exception{
 
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
@@ -66,10 +85,14 @@ public class TestAnimatedGifEncoder {
         encoder.setDelay(1000);
         encoder.setTransparent(0xffffff);
         encoder.setRepeat(10);
-        String pic_path = "res/";
+        String pic_path = "res/pos/";
         String[] inputs = getFiles(pic_path).toArray(new String[getFiles(pic_path).size()]);
         int idx = 0;
         for( String input : inputs ) {
+            File fileExt = new File(input);
+            if (fileExt.exists()) {
+                System.out.println(fileExt.getAbsolutePath());
+            }
             InputStream inputStream = TestAnimatedGifEncoder.class.getResourceAsStream(input);
             try {
                 BufferedImage image;
@@ -82,7 +105,8 @@ public class TestAnimatedGifEncoder {
                 int[] pixels = new int[image.getWidth() * image.getHeight()];
                 image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
                 encoder.addFrame(pixels, image.getWidth(), image.getHeight());
-            } finally {
+            } catch (Exception e) {
+                e.printStackTrace();
                 inputStream.close();
             }
         }
