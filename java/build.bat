@@ -20,9 +20,10 @@ for /f %%i in ( 'dir /s /b "%base_dir%\*.java"' ) do (
     )
 )
 endlocal
-javac -encoding utf-8 -h . test\TestAnimatedGifEncoder.java
+javac -encoding utf-8 -h . test\MakeAnimatedGifEncoder.java
 move test\*.class mypkg\
-xcopy /s/e res mypkg\
-java mypkg.TestAnimatedGifEncoder
+@rem xcopy /s/e res mypkg\
+xcopy /e/h/q/y res mypkg\
+java mypkg.MakeAnimatedGifEncoder
 
 :proc_err
