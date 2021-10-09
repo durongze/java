@@ -62,9 +62,13 @@ public class TestAnimatedGifEncoder {
     public static void DecGifFile(String gifFile, String outputPath)
     {
         GifDecoder gifDecoder = new GifDecoder();
+        File fileExt = new File(gifFile);
+        if (fileExt.exists()) {
+            System.out.println(fileExt.getAbsolutePath());
+        }
         gifDecoder.read(gifFile);
         int count = gifDecoder.getFrameCount();
-        System.out.println(" DecGifFile count:" + count);
+        System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName() + " count:" + count);
         for (int i = 0; i < count; i++)
         {
             BufferedImage frame = gifDecoder.getFrame(i);  // frame i
