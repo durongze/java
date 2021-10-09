@@ -81,11 +81,14 @@ public class TestAnimatedGifEncoder {
     public static final void main(String[] args) throws Exception{
 
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
-        encoder.start("TestAnimatedGifEncoder.gif");
+        String gifFileName = Thread.currentThread().getStackTrace()[1].getClassName() + ".gif";
+        String pic_path = "res/pos/";
+
+        encoder.start(gifFileName);
         encoder.setDelay(1000);
         encoder.setTransparent(0xffffff);
         encoder.setRepeat(10);
-        String pic_path = "res/pos/";
+
         String[] inputs = getFiles(pic_path).toArray(new String[getFiles(pic_path).size()]);
         int idx = 0;
         for( String input : inputs ) {
@@ -96,11 +99,11 @@ public class TestAnimatedGifEncoder {
             InputStream inputStream = TestAnimatedGifEncoder.class.getResourceAsStream(input);
             try {
                 BufferedImage image;
-                if (idx == 0) {
+                // if (idx == 0) {
                     image = ImageIO.read(inputStream);
-                } else {
-                    image = rotateImage(ImageIO.read(inputStream), idx * 90);
-                }
+                // } else {
+                //    image = rotateImage(ImageIO.read(inputStream), idx * 90);
+                // }
                 idx++;
                 int[] pixels = new int[image.getWidth() * image.getHeight()];
                 image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
@@ -112,5 +115,6 @@ public class TestAnimatedGifEncoder {
         }
    
         encoder.finish();
+        DecGifFile(gifFileName, pic_path);
     }
 }

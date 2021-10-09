@@ -60,12 +60,15 @@ public class MakeAnimatedGifEncoder {
     public static final void main(String[] args) throws Exception{
 
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
-        encoder.start("MakeAnimatedGifEncoder.gif");
+        String gifFileName = Thread.currentThread().getStackTrace()[1].getClassName() + ".gif";
+        String pngFileDir = "res/pos/";
+
+        encoder.start(gifFileName);
         encoder.setDelay(1000);
         encoder.setRepeat(1000);
         encoder.setTransparent(0xffffff);
         
-        String[] inputs = GetFileList("res/pos/");
+        String[] inputs = GetFileList(pngFileDir);
         for( String input : inputs ) {
             if (input == null) { 
                 continue;
@@ -86,6 +89,7 @@ public class MakeAnimatedGifEncoder {
             }
         }
         encoder.finish();
+        DecGifFile(gifFileName, pngFileDir);
     }
 
 }
