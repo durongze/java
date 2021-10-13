@@ -29,7 +29,7 @@ public class GifLog {
         prefix += ":" + GetClassName();
         prefix += ":" + GetFuncName();
         prefix += ":" + GetLineNumber();
-        prefix += "]";
+        prefix += "] ";
         System.out.println(prefix + str);
     }
 

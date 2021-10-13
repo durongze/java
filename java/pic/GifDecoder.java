@@ -147,6 +147,7 @@ public class GifDecoder {
 	 * frames as specified by their disposition codes).
 	 */
 	protected void setPixels() {
+		GifLog.Print("");
 		// expose destination image's pixels as int array
 		int[] dest =
 			((DataBufferInt) image.getRaster().getDataBuffer()).getData();
@@ -387,7 +388,7 @@ public class GifDecoder {
 		//  Decode GIF pixel stream.
 
 		datum = bits = count = first = top = pi = bi = 0;
-
+        GifLog.Print("npix:" + npix);
 		for (i = 0; i < npix;) {
 			if (top == 0) {
 				if (bits < code_size) {
@@ -510,6 +511,7 @@ public class GifDecoder {
 	 */
 	protected int readBlock() {
 		blockSize = read();
+		GifLog.Print("blockSize:" + blockSize);
 		int n = 0;
 		if (blockSize > 0) {
 			try {
@@ -570,7 +572,7 @@ public class GifDecoder {
 		boolean done = false;
 		while (!(done || err())) {
 			int code = read();
-			GifLog.Print(" code:" + code);	
+			GifLog.Print(" code:0x" + Integer.toHexString(code).toUpperCase());	
 			switch (code) {
 
 				case 0x2C : // image separator
@@ -579,6 +581,7 @@ public class GifDecoder {
 
 				case 0x21 : // extension
 					code = read();
+					GifLog.Print(" code:0x" + Integer.toHexString(code).toUpperCase());	
 					switch (code) {
 						case 0xf9 : // graphics control extension
 							readGraphicControlExt();
@@ -619,6 +622,7 @@ public class GifDecoder {
 	 * Reads Graphics Control Extension values
 	 */
 	protected void readGraphicControlExt() {
+		GifLog.Print("");
 		read(); // block size
 		int packed = read(); // packed fields
 		dispose = (packed & 0x1c) >> 2; // disposal method
@@ -662,6 +666,7 @@ public class GifDecoder {
 		ih = readShort();
 
 		int packed = read();
+		GifLog.Print("x:" + ix + ",y:" + iy + ",w:" + iw + ",h:" + ih + ",packed:" + packed);
 		lctFlag = (packed & 0x80) != 0; // 1 - local color table flag
 		interlace = (packed & 0x40) != 0; // 2 - interlace flag
 		// 3 - sort flag
