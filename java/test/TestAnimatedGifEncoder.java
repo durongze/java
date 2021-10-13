@@ -85,7 +85,7 @@ public class TestAnimatedGifEncoder {
     public static final void main(String[] args) throws Exception{
 
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
-        String gifFileName = Thread.currentThread().getStackTrace()[1].getClassName() + ".gif";
+        String gifFileName = Thread.currentThread().getStackTrace()[1].getClassName().toLowerCase() + ".gif";
         String pic_path = "res/pos/";
 
         encoder.start(gifFileName);

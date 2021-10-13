@@ -331,6 +331,7 @@ public class GifDecoder {
 			}
 			status = read(in);
 		} catch (IOException e) {
+			e.printStackTrace();
 			status = STATUS_OPEN_ERROR;
 		}
 
@@ -536,6 +537,7 @@ public class GifDecoder {
 	 * @return int array containing 256 colors (packed ARGB with full alpha)
 	 */
 	protected int[] readColorTable(int ncolors) {
+		GifLog.Print(" 3 * ncolors:" + (3 * ncolors));		
 		int nbytes = 3 * ncolors;
 		int[] tab = null;
 		byte[] c = new byte[nbytes];
@@ -568,6 +570,7 @@ public class GifDecoder {
 		boolean done = false;
 		while (!(done || err())) {
 			int code = read();
+			GifLog.Print(" code:" + code);	
 			switch (code) {
 
 				case 0x2C : // image separator
@@ -632,6 +635,7 @@ public class GifDecoder {
 	 * Reads GIF file header information.
 	 */
 	protected void readHeader() {
+		GifLog.Print(" 6 bytes(GIF) + LSD + ColorTable.");
 		String id = "";
 		for (int i = 0; i < 6; i++) {
 			id += (char) read();
@@ -710,7 +714,7 @@ public class GifDecoder {
 	 * Reads Logical Screen Descriptor
 	 */
 	protected void readLSD() {
-
+        GifLog.Print(" 2 bytes(width) + 2 bytes(height) + packed + bgIndex + pixelAspect.");
 		// logical screen size
 		width = readShort();
 		height = readShort();
@@ -774,7 +778,13 @@ public class GifDecoder {
 	}
 	public static void main(String[] args) {
         GifDecoder d = new GifDecoder();
-        d.read("testout.gif");
+        String gifFileName = "test.gif";
+		File fileExt = new File(gifFileName);
+		if (!fileExt.exists()) {
+		    System.out.println(fileExt.getAbsolutePath() + " does not exist");
+            return;
+		}
+        d.read(gifFileName);
         int n = d.getFrameCount();
         for (int i = 0; i < n; i++) {
             BufferedImage frame = d.getFrame(i);  // frame i
