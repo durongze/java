@@ -511,7 +511,7 @@ public class GifDecoder {
 	 */
 	protected int readBlock() {
 		blockSize = read();
-		GifLog.Print("blockSize:" + blockSize);
+		// GifLog.Print("blockSize:" + blockSize);
 		int n = 0;
 		if (blockSize > 0) {
 			try {

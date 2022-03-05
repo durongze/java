@@ -124,7 +124,7 @@ namespace Example
 			GifDecoder gifDecoder = new GifDecoder();
 			gifDecoder.Read(gifFile);
 			int count = gifDecoder.GetFrameCount();
-			Console.WriteLine(" DecGifFile count:" + count);
+			Console.WriteLine(" DecGifFile " + gifFile + " count:" + count);
 			for (int i = 0; i < count; i++)
 			{
 				Image frame = gifDecoder.GetFrame(i);  // frame i

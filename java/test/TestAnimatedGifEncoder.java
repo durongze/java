@@ -68,14 +68,15 @@ public class TestAnimatedGifEncoder {
         }
         gifDecoder.read(gifFile);
         int count = gifDecoder.getFrameCount();
-        System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName() + " count:" + count);
+        System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName() + " " + gifFile + " count:" + count);
         for (int i = 0; i < count; i++)
         {
             BufferedImage frame = gifDecoder.getFrame(i);  // frame i
-            String frameName = String.format("{0:000}", i); // Guid.NewGuid().ToString();
-            File outputfile = new File(outputPath + "3" + frameName);
+            String frameName = String.format("%04d", i) + ".png"; // Guid.NewGuid().ToString();
             try {
+                File outputfile = new File(outputPath + "3" + frameName);
                 ImageIO.write(frame, "png", outputfile);
+                System.out.println(outputfile.getAbsolutePath());
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -96,11 +97,17 @@ public class TestAnimatedGifEncoder {
         String[] inputs = getFiles(pic_path).toArray(new String[getFiles(pic_path).size()]);
         int idx = 0;
         for( String input : inputs ) {
+            if (input == null || !input.endsWith(".png") || !input.endsWith(".jpg")) {
+                continue;
+            }
             File fileExt = new File(input);
             if (fileExt.exists()) {
                 System.out.println(fileExt.getAbsolutePath());
             }
             InputStream inputStream = TestAnimatedGifEncoder.class.getResourceAsStream(input);
+            if (inputStream == null) {
+                continue;
+            }
             try {
                 BufferedImage image;
                 // if (idx == 0) {
