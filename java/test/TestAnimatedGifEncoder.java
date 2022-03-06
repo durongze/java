@@ -87,7 +87,7 @@ public class TestAnimatedGifEncoder {
 
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
         String gifFileName = Thread.currentThread().getStackTrace()[1].getClassName().toLowerCase() + ".gif";
-        String pic_path = "res/pos/";
+        String pic_path = "res/jpeg_ok/";
 
         encoder.start(gifFileName);
         encoder.setDelay(1000);
@@ -103,6 +103,8 @@ public class TestAnimatedGifEncoder {
             File fileExt = new File(input);
             if (fileExt.exists()) {
                 System.out.println(fileExt.getAbsolutePath());
+            } else {
+                continue;
             }
             InputStream inputStream = TestAnimatedGifEncoder.class.getResourceAsStream(input);
             if (inputStream == null) {
