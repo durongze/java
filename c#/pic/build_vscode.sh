@@ -23,7 +23,7 @@ function CompileCsharp()
 {
     local Srcs=$*
     echo "mcs ${Srcs} -r:System.dll -r:System.Drawing.dll -lib:$DOTNET_LIB"
-    #mcs ${Srcs} -r:System.dll -r:System.Drawing.dll -r:System.Core.dll -r:System.ValueTyple.dll -lib:$DOTNET_LIB
+    #mcs ${Srcs} -r:System.dll -r:System.Drawing.dll -r:System.Core.dll -r:System.ValueTuple.dll -lib:$DOTNET_LIB
     mcs ${Srcs}
 }
 
