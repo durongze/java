@@ -1,5 +1,7 @@
 @echo off
 
+rem jar -tvf lib/selenium-server-4.4.0.jar
+
 rem set JAVA_HOME=D:\Programs\jdk-13
 rem set CLASSPATH=%JAVA_HOME%\lib;%JAVA_HOME%\lib\jrt-fs.jar;.
 rem set PATH=%PATH%;%JAVA_HOME%\bin

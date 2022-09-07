@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#jar -tvf lib/selenium-server-4.4.0.jar
+
 #export JAVA_HOME=/usr/lib/jvm/java-1.14.0-openjdk-amd64
 #export JAVA_HOME=/usr/lib/jvm/java-14-openjdk-amd64
 #export JAVA_HOME=/usr/lib/jvm/openjdk-14
@@ -46,7 +48,8 @@ if [[ -f mypkg ]] || [[ -d mypkg ]] ;then
     echo "mypkg"
 fi
 
-export Srcs=$(ls pic/*.java test/*AnimatedGifEncoder.java)
+export Srcs=$(ls pic/*.java)
+export Srcs=$(ls test/*AnimatedGifEncoder.java)
 
 CompileJava "${Srcs}"
 

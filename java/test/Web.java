@@ -12,31 +12,35 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class Web 
 {
     WebDriver iebw = null;
-	String browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe";
+    // String browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe";
+    // String browser_driver = "C:/Windows/chromedriver.exe";
+
+    String browser = "/usr/bin/google-chrome";
+    String browser_driver = "/usr/bin/chromedriver";
     String url = "http://www.baidu.com";
 	String kw = "kw";
     String btn = "su";
     String searchKw = "duyongze";
+
     public Web()
     {
-        iebw = new InternetExplorerDriver();
-
-		// ChromeOptions options = new ChromeOptions();
-		// options.addArguments("disable-infobars");
-		// options.setBinary(browser);
-		// System.setProperty("webdriver.chrome.driver", "C:/Windows/chromedriver.exe");
-		// iebw = new ChromeDriver(options);
-        
         // iebw = new FirefoxDriver();
-		iebw.manage().window().maximize();
-		
+        // iebw = new InternetExplorerDriver();
+
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("disable-infobars");
+        options.setBinary(browser);
+        System.setProperty("webdriver.chrome.driver", browser_driver);
+        iebw = new ChromeDriver(options);
+
+        iebw.manage().window().maximize();
     }
-    
+
     public void SwitchToSpecFrame()
     {
-        
+
     }
-    
+
     public void ExecJavaScript(WebElement element)
     {
         JavascriptExecutor js = (JavascriptExecutor)iebw;
@@ -52,10 +56,10 @@ public class Web
     {
         iebw.get(url);
         WebElement kwElement = iebw.findElement(By.id(kw));
-		kwElement.sendKeys(searchKw);
-		kwElement.sendKeys(Keys.ENTER);
+        kwElement.sendKeys(searchKw);
+        kwElement.sendKeys(Keys.ENTER);
         WebElement btnElement = iebw.findElement(By.id(btn));
-		ExecJavaScript(btnElement);
+        ExecJavaScript(btnElement);
         return ;
     }
     

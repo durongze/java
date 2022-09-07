@@ -63,6 +63,7 @@ function GenDotNetLibs()
 function CompileAllCsharp()
 {
     local Srcs=$*
+    FixMain $Srcs
     for SrcFile in ${Srcs}
     do
         ObjFile=${SrcFile%*.cs}
@@ -86,6 +87,7 @@ function CompileCsharp()
     ${DOTNET_CPP} add package JavaScriptEngineSwitcher.V8
     ${DOTNET_CPP} add package JavaScriptEngineSwitcher.ChakraCore
     ${DOTNET_CPP} build web.csproj
+    ${DOTNET_CPP} run
 }
 
 function FixMain()
@@ -114,10 +116,16 @@ web_srcs="$web_srcs"
 # https://chromedriver.chromium.org/
 # http://chromedriver.storage.googleapis.com/index.html
 
+export LIBRARY_PATH=$LIBRARY_PATH:$JAVA_SCRIPT_ENGINE_LIB_DIR:$SELENIUM_LIB_DIR
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_SCRIPT_ENGINE_LIB_DIR:$SELENIUM_LIB_DIR
+export PATH=$PATH:$JAVA_SCRIPT_ENGINE_LIB_DIR:$SELENIUM_LIB_DIR
+
 if [ "$DOTNET_CPP" == "mcs" ];then
     CompileAllCsharp "$web_srcs"
 else 
     CompileCsharp "$web_srcs"
 fi
+
+#mono ./Web.exe --aot-path=$LIBRARY_PATH
 
 

@@ -11,8 +11,8 @@ class CCTVDownload {
     string jsZoom = "document.body.style.zoom='1'";
     public CCTVDownload()
     {
-        iebw = new InternetExplorerDriver();
-        // iebw = new ChromeDriver();
+        // iebw = new InternetExplorerDriver();
+        iebw = new ChromeDriver();
     }
     ~CCTVDownload()
     {
