@@ -45,4 +45,11 @@ class TsDownload {
         element.SendKeys("123456");
         return 0;
     }
+
+    public static void TsDownloadMain(string[] args) {
+        Console.WriteLine("Main");
+        TsDownload wc = new TsDownload();
+        wc.GetWebPage();
+        return;
+    }
 }

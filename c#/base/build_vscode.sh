@@ -1,14 +1,21 @@
 #!/bin/bash
 
-DOTNET_ROOT=/opt/dotnet5
-DOTNET_VER=5.0.9
-DOTNET_LIB_DIR=$DOTNET_ROOT/shared/Microsoft.NETCore.App/$DOTNET_VER
+VENDER="MS"
+VENDER="OPEN"
 
-DOTNET_LIBS="-r:System.Windows.dll -r:System.dll -r:System.Drawing.dll -r:System.Core.dll -r:System.ValueTuple.dll"
-DOTNET_CPP=${DOTNET_ROOT}/dotnet
+if [ $VENDER == "MS" ];then
+    DOTNET_ROOT=/opt/dotnet5
+    DOTNET_VER=5.0.9
+    DOTNET_LIB_DIR=$DOTNET_ROOT/shared/Microsoft.NETCore.App/$DOTNET_VER
+    DOTNET_LIBS="-r:System.Windows.dll -r:System.dll -r:System.Drawing.dll -r:System.Core.dll -r:System.ValueTuple.dll"
+    DOTNET_CPP=${DOTNET_ROOT}/dotnet
+else
+    DOTNET_LIB_DIR=""
+    DOTNET_LIBS=" -r:System.Drawing -r:System.Windows.Forms "
+    DOTNET_CPP=mcs
+fi
 
-DOTNET_LIBS=""
-DOTNET_CPP=mcs
+ALL_LIBS=" -lib:$DOTNET_LIB_DIR $DOTNET_LIBS "
 
 function GenDotNetLibs()
 {
@@ -30,12 +37,15 @@ function CompileAllCsharp()
     local Srcs=$*
     for SrcFile in ${Srcs}
     do
+        if [ "$SrcFile" == "./MyDll.cs" ] || [ "$SrcFile" == "./MyApp.cs" ] ;then
+            continue
+        fi
         ObjFile=${SrcFile%*.cs}
         ObjFile=${ObjFile}.exe
-        echo $FUNCNAME ObjFile: ${ObjFile}
+        echo -e "\033[32m $FUNCNAME SrcFile: ${SrcFile} ObjFile: ${ObjFile} \033[0m"
 
-        echo "${DOTNET_CPP} ${SrcFile} -lib:$DOTNET_LIB_DIR $DOTNET_LIBS"
-        ${DOTNET_CPP} ${SrcFile} -lib:$DOTNET_LIB_DIR $DOTNET_LIBS
+        echo "${DOTNET_CPP} ${SrcFile} ${ALL_LIBS}"
+        ${DOTNET_CPP} ${SrcFile} ${ALL_LIBS}
 
         #mv ${ObjFile}.class mypkg
     done
@@ -44,8 +54,8 @@ function CompileAllCsharp()
 function CompileCsharp()
 {
     local Srcs=$*
-    echo "${DOTNET_CPP} ${Srcs} -lib:$DOTNET_LIB_DIR $DOTNET_LIBS"
-    ${DOTNET_CPP} ${Srcs} -lib:$DOTNET_LIB_DIR $DOTNET_LIBS
+    echo "${DOTNET_CPP} ${Srcs} ${ALL_LIBS}"
+    ${DOTNET_CPP} ${Srcs} ${ALL_LIBS}
 }
 
 pic_srcs=$(find ./ -iname "*.cs" -type f)

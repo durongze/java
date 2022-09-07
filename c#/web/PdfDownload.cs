@@ -6,6 +6,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support;
 using JavaScriptEngineSwitcher.Core;
 using JavaScriptEngineSwitcher.ChakraCore;
+using JavaScriptEngineSwitcher.V8;
 
 class PdfDownload
 {
@@ -53,6 +54,7 @@ class PdfDownload
     }
     public static string Ck(string cert, string ts, string nullPara, string page, string token)
     {
+        /*
         var basePath = AppDomain.CurrentDomain.BaseDirectory;
         IJsEngineSwitcher engineSwitcher = JsEngineSwitcher.Current;
         engineSwitcher.EngineFactories.Add(new ChakraCoreJsEngineFactory());
@@ -65,5 +67,14 @@ class PdfDownload
             var publickey = engine.CallFunction("$CFMethod", arr);
             return publickey.ToString();
         }
+        */
+        return "";
+    }
+    
+    public static void PdfDownloadMain(string[] args) {
+        Console.WriteLine("Main");
+        PdfDownload wc = new PdfDownload();
+        wc.GetWebPage();
+        return;
     }
 }

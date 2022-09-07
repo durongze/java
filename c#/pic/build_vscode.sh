@@ -31,6 +31,7 @@ pic_srcs=$(find ./src -type f)
 pic_srcs="$pic_srcs ExampleMain.cs"
 # CompileCsharp "$pic_srcs"
 
+#dotnet new console
 #dotnet add package System.Drawing.Common
 dotnet build pic.csproj
 mv bin/Debug/net4.5/pic.exe .

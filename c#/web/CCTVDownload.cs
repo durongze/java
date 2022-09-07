@@ -5,22 +5,21 @@ using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support;
 
-class Web{
-    // IWebDriver iebw;
-    ChromeDriver iebw;
-    string url = "www.baidu.com";
-    string btn = "su";
-    string kw = "kw";
+class CCTVDownload {
+    IWebDriver iebw;
+    string url = "https://tv.cctv.com/2022/05/06/VIDEQKRGQDSwccR3o0h2knZm220506.shtml?spm=C28340.Pu9TN9YUsfNZ.S93183.55";
     string jsZoom = "document.body.style.zoom='1'";
-    public Web() {
-        // iebw = new InternetExplorerDriver();
-        iebw = new ChromeDriver();
+    public CCTVDownload()
+    {
+        iebw = new InternetExplorerDriver();
+        // iebw = new ChromeDriver();
     }
-    ~Web()
+    ~CCTVDownload()
     {
         iebw.Close();
     }
-    public void GetWebPage() {
+    public void GetWebPage()
+    {
         ExecJavaScript(jsZoom);
         iebw.Navigate().GoToUrl(url);
     }
@@ -39,24 +38,19 @@ class Web{
         js.ExecuteScript(jsCmd);
     }
 
-    public void StartSearch()
-    {
-        IWebElement element = iebw.FindElement(By.Id(btn));
-        Console.WriteLine(element.ToString());
-        ExecJavaScript(element);
-    }
-
-    public void InputKeyWord()
+    public int FindElementById(string kw)
     {
         IWebElement element = iebw.FindElement(By.Id(kw));
         Console.WriteLine(element.ToString());
         element.SendKeys("123456");
+        return 0;
     }
-    // 在属性中修改为控制台程序，才能看到输出
-    public static void Main(string[] args) {
+
+    public static void CCTVDownloadMain(string[] args) {
         Console.WriteLine("Main");
-        Web wc = new Web();
+        CCTVDownload wc = new CCTVDownload();
         wc.GetWebPage();
+        wc.FindElementById("#_video_player_html5_api");
         return;
     }
 }
