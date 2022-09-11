@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Runtime.InteropServices;
 using OpenQA.Selenium;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Chrome;
@@ -7,11 +8,11 @@ using OpenQA.Selenium.Support;
 
 class Web{
     IWebDriver iebw;
-    // String browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe";
-    // String browser_driver = "C:/Windows/chromedriver.exe";
+    String win_browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe";
+    String win_browser_driver = "C:/Windows/chromedriver.exe";
 
-    String browser = "/usr/bin/google-chrome";
-    String browser_driver = "/usr/bin/chromedriver";
+    String linux_browser = "/usr/bin/google-chrome";
+    String linux_browser_driver = "/usr/bin/chromedriver";
 
     string url = "www.baidu.com";
     string btn = "su";
@@ -21,11 +22,15 @@ class Web{
     public Web() {
         // iebw = new FirefoxDriver();
         // iebw = new InternetExplorerDriver();
-
+        Console.WriteLine(Environment.OSVersion.ToString());
         ChromeOptions options = new ChromeOptions();
         options.AddArguments("disable-infobars");
-        // options.SetBinary(browser);
-        // System.SetProperty("webdriver.chrome.driver", browser_driver);
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+            options.BinaryLocation = (linux_browser);
+        } else {
+            options.BinaryLocation = (win_browser);         
+        }
+
         iebw = new ChromeDriver(options);
     }
     ~Web()
@@ -33,7 +38,7 @@ class Web{
         iebw.Close();
     }
     public void GetWebPage() {
-        ExecJavaScript(jsZoom);
+        // ExecJavaScript(jsZoom);
         iebw.Navigate().GoToUrl(url);
     }
 

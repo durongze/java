@@ -6,7 +6,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support;
 using JavaScriptEngineSwitcher.Core;
 using JavaScriptEngineSwitcher.ChakraCore;
-using JavaScriptEngineSwitcher.V8;
+// using JavaScriptEngineSwitcher.V8;
 
 class PdfDownload
 {
