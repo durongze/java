@@ -14,7 +14,7 @@ class Web{
     String linux_browser = "/usr/bin/google-chrome";
     String linux_browser_driver = "/usr/bin/chromedriver";
 
-    string url = "www.baidu.com";
+    string url = "http://www.baidu.com";
     string btn = "su";
     string kw = "kw";
     string jsZoom = "document.body.style.zoom='1'";
@@ -38,7 +38,7 @@ class Web{
         iebw.Close();
     }
     public void GetWebPage() {
-        // ExecJavaScript(jsZoom);
+        ExecJavaScript(jsZoom);
         iebw.Navigate().GoToUrl(url);
     }
 
@@ -82,7 +82,9 @@ class Web{
         Console.WriteLine("Main");
         Web wc = new Web();
         wc.GetWebPage();
-        wc.DumpDllType("/home/du/code/java/java/c#/web/bin/Debug/net5.0/WebDriver.dll");
+        // wc.DumpDllType("/home/du/code/java/java/c#/web/bin/Debug/net5.0/WebDriver.dll");
+        wc.InputKeyWord();
+        wc.StartSearch();
         return;
     }
 }

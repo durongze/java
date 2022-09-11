@@ -1,4 +1,4 @@
-package com.durongze;
+package mypkg;
 
 import java.io.*;
 import org.openqa.selenium.*;
@@ -12,11 +12,12 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class Web 
 {
     WebDriver iebw = null;
-    // String browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe";
-    // String browser_driver = "C:/Windows/chromedriver.exe";
+    String win_browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe";
+    String win_browser_driver = "C:/Windows/chromedriver.exe";
 
-    String browser = "/usr/bin/google-chrome";
-    String browser_driver = "/usr/bin/chromedriver";
+    String linux_browser = "/usr/bin/google-chrome";
+    String linux_browser_driver = "/usr/bin/chromedriver";
+
     String url = "http://www.baidu.com";
 	String kw = "kw";
     String btn = "su";
@@ -29,8 +30,15 @@ public class Web
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("disable-infobars");
-        options.setBinary(browser);
-        System.setProperty("webdriver.chrome.driver", browser_driver);
+        String osName = System.getProperties().getProperty("os.name");
+        if (osName != "Linux") {
+            options.setBinary(win_browser);
+            System.setProperty("webdriver.chrome.driver", win_browser_driver);
+        } else {
+            options.setBinary(linux_browser);
+            System.setProperty("webdriver.chrome.driver", linux_browser_driver);
+        }
+
         iebw = new ChromeDriver(options);
 
         iebw.manage().window().maximize();
