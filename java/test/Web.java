@@ -1,4 +1,4 @@
-package mypkg;
+package com.durongze;
 
 import java.io.*;
 import org.openqa.selenium.*;
@@ -31,7 +31,8 @@ public class Web
         ChromeOptions options = new ChromeOptions();
         options.addArguments("disable-infobars");
         String osName = System.getProperties().getProperty("os.name");
-        if (osName != "Linux") {
+        System.out.println("osName:" + osName);
+        if (!osName.equals("Linux")) {
             options.setBinary(win_browser);
             System.setProperty("webdriver.chrome.driver", win_browser_driver);
         } else {

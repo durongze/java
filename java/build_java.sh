@@ -49,8 +49,8 @@ if [[ -f mypkg ]] || [[ -d mypkg ]] ;then
 fi
 
 export Srcs=$(ls pic/*.java)
+CompileJava "${Srcs}"
 export Srcs=$(ls test/*AnimatedGifEncoder.java)
-
 CompileJava "${Srcs}"
 
 CopyRes

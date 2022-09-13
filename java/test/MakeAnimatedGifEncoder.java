@@ -82,7 +82,7 @@ public class MakeAnimatedGifEncoder {
             if (fileExt.exists()) {
                 System.out.println(fileExt.getAbsolutePath());
             }
-            MakeAnimatedGifEncoder.class.getAbsolutePath();
+            // MakeAnimatedGifEncoder.class.getAbsolutePath();
             InputStream inputStream = MakeAnimatedGifEncoder.class.getResourceAsStream(input);
             if (inputStream == null) {
                 continue;
