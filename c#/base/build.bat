@@ -4,10 +4,15 @@ set app_srcs=MyApp.cs
 set dll_srcs=MyDll.cs
 set base_dir=.
 
-goto:bat_start
+call :bat_start
+
+pause
+goto :eof
 
 :set_all_cs
     setlocal ENABLEDELAYEDEXPANSION
+    set base_dir=%~1
+
     set srcs1=
     set srcs2=
     for /f %%i in ('dir /b "%base_dir%\*.cs"') do (
@@ -17,7 +22,7 @@ goto:bat_start
     )
     echo srcs1 : %srcs1%
     echo srcs2 : !srcs2!
-    endlocal & set "%~1=%srcs2%"
+    endlocal & set "%~2=%srcs2%"
 goto:eof
 
 :compile_cs_to_cmd
@@ -84,6 +89,13 @@ goto:eof
     endlocal
 goto:eof
 
+@rem YellowBackground    6f  ef
+@rem BlueBackground      9f  bf   3f
+@rem GreenBackground     af  2f
+@rem RedBackground       4f  cf
+@rem GreyBackground      7f  8f
+@rem PurpleBackground    5f
+
 :color_text
     setlocal EnableDelayedExpansion
     for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1) do rem"') do (
@@ -98,14 +110,15 @@ goto:eof
 goto :eof
 
 :bat_start
-    call:color_text 4e "+++++++++++++++start+++++++++++++"
-    call:set_all_cs m_srcs 
+    setlocal EnableDelayedExpansion
+    call :color_text 4e "+++++++++++++++start+++++++++++++"
+    set base_dir=.
+    call :set_all_cs "%base_dir%"   m_srcs 
 
-    call:color_text 19 "+++++++++++++++compile srcs+++++++++++++"
-    rem call:compile_cs_to_cmd %m_srcs%
+    call :color_text 19 "+++++++++++++++compile srcs+++++++++++++"
+    @rem call:compile_cs_to_cmd "%m_srcs%"
  
-    call:color_text 2F "---------------execute exes-------------"
-    call:execute_exe %m_srcs% 
-
-:proc_err
-pause
+    call :color_text 2F "---------------execute exes-------------"
+    call :execute_exe %m_srcs% 
+    endlocal
+goto:eof
