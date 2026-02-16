@@ -4,10 +4,11 @@ project("gifApp" CSharp)
 
 set(BASE_SRC_DIR ${PROJECT_SOURCE_DIR} CACHE STRING "BASE_SRC_DIR.")
 
-#set(NET_VER_DIR "net35" CACHE STRING "BASE_SRC_DIR.")
-set(NET_VER_DIR "net40" CACHE STRING "BASE_SRC_DIR.")
-#set(NET_VER_DIR "net45" CACHE STRING "BASE_SRC_DIR.")
-#set(NET_VER_DIR "netstandard2.0" CACHE STRING "BASE_SRC_DIR.")
+# set(NET_VER_DIR "net35" CACHE STRING "DOTNET_DIR.")
+# set(NET_VER_DIR "net40" CACHE STRING "DOTNET_DIR.")
+# set(NET_VER_DIR "net45" CACHE STRING "DOTNET_DIR.")
+set(NET_VER_DIR "net48" CACHE STRING "DOTNET_DIR.")
+# set(NET_VER_DIR "netstandard2.0" CACHE STRING "DOTNET_DIR.")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDYZ_DBG")
 
@@ -20,7 +21,12 @@ add_library(libgif STATIC ${GIF_DLL_SRC})
 add_executable(gifApp ${GIF_APP_SRC} ${GIF_DLL_SRC})
 
 # Set the .NET Framework version for the executable.
-# set_property(TARGET gifApp PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
+set (ALL_PROJ gifApp)
+
+# v2.0  v3.0  v3.5  v4.0  v4.5  v4.5.1  v4.5.2  v4.6  v4.6.1  v4.6.2  v4.7  v4.7.1  v4.7.2  v4.8
+foreach(subproj ${ALL_PROJ})
+    set_property(TARGET ${subproj} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.8")
+endforeach()
 
 # Set the executable to be 32-bit.
 set_property(TARGET libgif PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
@@ -46,6 +52,7 @@ set_property(TARGET libgif PROPERTY VS_DOTNET_REFERENCES
     "System.Drawing"
     "System.Windows.Forms"
 )
+
 set_property(TARGET gifApp PROPERTY VS_DOTNET_REFERENCES
     "Microsoft.CSharp"
     "System"
@@ -55,5 +62,3 @@ set_property(TARGET gifApp PROPERTY VS_DOTNET_REFERENCES
     "System.Windows.Forms"
 )
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/Release")
-
-
