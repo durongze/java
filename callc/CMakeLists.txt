@@ -28,4 +28,5 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ ${JAVA_HOME}/include/ ${JAVA_HO
 add_library(CLibrary SHARED ${C_LIBRARY_SRC})
 
 file(GLOB CPP_CALL_JNI_SRC ../*.cpp )
+
 add_executable(CppCallJni ${C_LIBRARY_SRC} ${CPP_CALL_JNI_SRC})
