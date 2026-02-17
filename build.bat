@@ -9,10 +9,6 @@ call :DetectAndroidDir AndroidDir
 echo ProgramDir=%ProgramDir%
 echo AndroidDir=%AndroidDir%
 
-set old_sys_include="%include%"
-set old_sys_lib="%lib%"
-set old_sys_path="%path%"
-
 set CurDir=%~dp0
 set ProjDir=%CurDir:~0,-1%
 set software_dir="%ProjDir%\thirdparty"
@@ -34,21 +30,9 @@ set PATH=%NASMPath%;%YASMPath%;%GPERFPath%;%PerlPath%;%CMakePath%;%SDCCPath%;%Ma
 
 set MakeProgram=%MakePath%\make.exe
 
-call :TaskKillSpecProcess  "cl.exe"
-call :TaskKillSpecProcess  "MSBuild.exe"
 
+pause
 chcp 65001
-
-rem set JAVA_HOME=%ProgramDir%\Java\jdk1.8.0_60
-rem set JAVA_HOME=%ProgramDir%\Java\jdk-12.0.2
-set JAVA_HOME=%ProgramDir%\Java\jdk-1.8
-
-set PATH=%PATH%;%JAVA_HOME%\bin;
-
-set PATH=%PATH%;%AndroidDir%\sdk\ndk-bundle\android-ndk-r20
-
-java -version
-rem ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk
 
 @rem x86  or x64
 call "%VisualStudioCmd%" x64
@@ -60,10 +44,16 @@ pushd %CurDir%
 @rem Win32  or x64
 set ArchType=x64
 
-set BuildDir=dyzbuild
+set BuildDir=BuildLib
 set BuildType=Debug
 
 set ProjName=CppCallJni
+@rem call :get_suf_sub_str %ProjDir% \ ProjName
+
+call :BuildJavaProj     %CurDir%
+
+call :BuildAndroidProj  %CurDir%
+
 call :CompileProject "%BuildDir%" "%BuildType%" "%ProjName%" "%HomeDir%"
 
 @rem %QtMsvcPath%\bin\windeployqt6.exe %BuildDir%\%BuildType%\%ProjName%.exe
@@ -71,24 +61,83 @@ call :CompileProject "%BuildDir%" "%BuildType%" "%ProjName%" "%HomeDir%"
 pause
 goto :eof
 
+:DetectJavaPath
+    setlocal EnableDelayedExpansion
+
+    call :color_text 2f " ++++++++++++++++++ DetectJavaPath +++++++++++++++++++++++ "
+    set VSDiskSet=C;D;E;F;G;
+
+    set AllProgramsPathSet="program"
+    set AllProgramsPathSet=%AllProgramsPathSet%;"programs"
+    set AllProgramsPathSet=%AllProgramsPathSet%;"Program Files"
+    set AllProgramsPathSet=%AllProgramsPathSet%;"Program Files (x86)"
+
+    set JavaPathSet=%JavaPathSet%;"Java\jdk-1.8"
+    set JavaPathSet=%JavaPathSet%;"Java\jdk-1.8.0_60"
+    set JavaPathSet=%JavaPathSet%;"Java\jdk-12.0.2"
+    set JavaPathSet=%JavaPathSet%;"Java\jdk-23"
+
+    set idx_a=0
+    for %%A in (!VSDiskSet!) do (
+        set /a idx_a+=1
+        set idx_b=0
+        for %%B in (!AllProgramsPathSet!) do (
+            set /a idx_b+=1
+            set idx_c=0
+            for %%C in (!JavaPathSet!) do (
+                set /a idx_c+=1
+                set CurJavaDirName=%%A:\%%~B\%%~C\
+                echo [!idx_a!][!idx_b!][!idx_c!] !CurJavaDirName!
+                if exist !CurJavaDirName! (
+                    set JavaDirName=!CurJavaDirName!
+                    goto :DetectJavaPathBreak
+                )
+            )
+        )
+    )
+    :DetectJavaPathBreak
+    echo Use:%JavaDirName%
+    set PATH=%PATH%;%JavaDirName%\bin;
+    java -version
+    call :color_text 2f " -------------------- DetectJavaPath ----------------------- "
+    endlocal & set "%~1=%JavaDirName%"
+goto :eof
+
+:BuildJavaProj
+    setlocal EnableDelayedExpansion
+    set ProjDir=%~1
+
+    call :color_text 2f " +++++++++++++++++++ BuildJavaProj +++++++++++++++++++ "
+
+    call :DetectJavaPath   JAVA_HOME
+    set PATH=%JAVA_HOME%\bin;%PATH%;
+	
+	pushd %ProjDir%
+        javac -encoding utf-8 -d . callc.java
+        javap -s com.durongze.jni.CallC
+        rem javah -jni com.durongze.jni.CallC
+        javac -encoding utf-8 -h . callc.java
+    popd
+
+    call :color_text 2f " ------------------- BuildJavaProj ------------------- "
+
+    endlocal
+goto :eof
+
 :BuildAndroidProj
     setlocal EnableDelayedExpansion
     set ProjDir=%~1
     set ProgramDir=%ProgramDir%
     set AndroidDir=%AndroidDir%
-    call :color_text 2f " +++++++++++++++++++ FuncBuildAndroidProj +++++++++++++++++++ "
+    call :color_text 2f " +++++++++++++++++++ BuildAndroidProj +++++++++++++++++++ "
 
-    @rem set JAVA_HOME=%ProgramDir%\Java\jdk-12.0.2
-    @rem set JAVA_HOME=%ProgramDir%\Java\jdk-23
-    set JAVA_HOME=%ProgramDir%\Java\jdk-1.8
-
+    call :DetectJavaPath   JAVA_HOME
     set PATH=%JAVA_HOME%\bin;%PATH%;
 
+    call :DetectAndroidDir AndroidDir
+    set PATH=%AndroidDir%\ndk\android-ndk-r19c;%PATH%;
     set PATH=%AndroidDir%\ndk\25.1.8937393;%PATH%;
-    @rem set PATH=E:\program\android-ndk-r26b;%PATH%;
-    set PATH=%AndroidDir%\sdk\ndk-bundle\android-ndk-r20;%PATH%;
-
-    @rem set PATH=%AndroidDir%\ndk\android-ndk-r19c;%PATH%;
+    set PATH=%AndroidDir%\ndk-bundle\android-ndk-r20;%PATH%;
 
     java  -version
     javac -version
@@ -98,16 +147,16 @@ goto :eof
         call ndk-build    NDK_PROJECT_PATH=.    NDK_APPLICATION_MK=Application.mk    APP_BUILD_SCRIPT=Android.mk
     popd
 
-    call :color_text 2f " ------------------- FuncBuildAndroidProj ------------------- "
+    call :color_text 2f " ------------------- BuildAndroidProj ------------------- "
 
     endlocal
 goto :eof
 
 :MainStart
     setlocal EnableDelayedExpansion
-    call :color_text 2f " +++++++++++++++++++ FuncBuildAndroidProj +++++++++++++++++++ "
+    call :color_text 2f " +++++++++++++++++++ MainStart +++++++++++++++++++ "
     call :BuildAndroidProj "."
-    call :color_text 2f " ------------------- FuncBuildAndroidProj ------------------- "
+    call :color_text 2f " ------------------- MainStart ------------------- "
     endlocal
 goto :eof
 
@@ -269,7 +318,6 @@ goto :eof
     endlocal & set "%~2=%QtMsvcDepLibs%"
 goto :eof
 
-
 :DetectProgramDir
     setlocal EnableDelayedExpansion
     @rem SkySdk\VS2005\VC
@@ -324,13 +372,13 @@ goto :eof
     set VCPathSet=%VCPathSet%;"Microsoft Visual Studio 14.0\VC\bin"
 
     set idx_a=0
-    for %%A in (!VSDiskSet!) do (
+    for %%C in (!VCPathSet!) do (
         set /a idx_a+=1
         set idx_b=0
         for %%B in (!AllProgramsPathSet!) do (
             set /a idx_b+=1
             set idx_c=0
-            for %%C in (!VCPathSet!) do (
+            for %%A in (!VSDiskSet!) do (
                 set /a idx_c+=1
                 set CurBatFile=%%A:\%%~B\%%~C\vcvarsall.bat
                 echo [!idx_a!][!idx_b!][!idx_c!] !CurBatFile!
@@ -398,28 +446,38 @@ goto :eof
     setlocal EnableDelayedExpansion
     @rem SkySdk\VS2005\VC
     set SkySdkDiskSet=C;D;E;F;G;
-    set CurAndroidDir=
-    set idx=0
+
+    set AndroidPathSet="AndroidSdk\sdk"
+    set AndroidPathSet=%AndroidPathSet%;"Android\sdk"
+
+    set i_idx=0
     call :color_text 2f " +++++++++++++++++++ DetectAndroidDir +++++++++++++++++++++++ "
     for %%i in (%SkySdkDiskSet%) do (
-        set /a idx+=1
-        for /f "tokens=1-2 delims=|" %%B in ("AndroidSdk|Android") do (
-            set CurAndroidDir=%%i:\%%B
-            echo [!idx!] !CurAndroidDir!
-            if exist !CurAndroidDir!\ndk (
-                goto :DetectAndroidDirBreak
-            )
-            set CurAndroidDir=%%i:\%%C
-            echo [!idx!] !CurAndroidDir!
-            if exist !CurAndroidDir!\ndk (
-                goto :DetectAndroidDirBreak
+        set /a i_idx+=1
+        set j_idx=0
+        for %%j in (%AndroidPathSet%) do (
+            set /a j_idx+=1
+            set AndroidSdkDir=%%i:\%%~j
+            for /f "tokens=1-2 delims=|" %%B in ("ndk-bundle|ndk") do (
+                set CurAndroidNdkDir=!AndroidSdkDir!\%%~B
+                echo [!i_idx!][!j_idx!] !CurAndroidNdkDir!
+                if exist !CurAndroidNdkDir! (
+                    set AndroidNdkDir=!CurAndroidNdkDir!
+                    goto :DetectAndroidDirBreak
+                )
+                set CurAndroidNdkDir=!AndroidSdkDir!\%%~C
+                echo [!i_idx!][!j_idx!] !CurAndroidNdkDir!
+                if exist !CurAndroidNdkDir! (
+                    set AndroidNdkDir=!CurAndroidNdkDir!
+                    goto :DetectAndroidDirBreak
+                )
             )
         )
     )
     :DetectAndroidDirBreak
-    set AndroidDir=!CurAndroidDir!
+    echo Use:%AndroidSdkDir%
     call :color_text 2f " ------------------- DetectAndroidDir ----------------------- "
-    endlocal & set %~1=%AndroidDir%
+    endlocal & set %~1=%AndroidSdkDir%
 goto :eof
 
 :CompileProject
@@ -456,8 +514,8 @@ goto :eof
         @rem cmake .. -G "Visual Studio 17 2022" -A  %ArchType%
         @rem cmake    -G "Visual Studio 8  2005"     ..
         @rem cmake --build . --target clean
-        @rem cmake ..  %ALL_DEFS%  -A %ArchType%
-        cmake      ..  %ALL_DEFS%  -G "NMake Makefiles" 
+        cmake ..  %ALL_DEFS%  -A %ArchType%
+        @rem cmake      ..  %ALL_DEFS%  -G "NMake Makefiles" 
         @rem call :ResetSystemEnv
         @rem cmake --build .       --config %BuildType%  --target %ProjName%
         cmake      --build .       --config %BuildType%  --target %ProjName%
@@ -466,7 +524,7 @@ goto :eof
         dumpbin /dependents Debug\CppCallJni.exe
     popd
     echo "调试时如果报异常，记得不要点击中断，要点击继续"
-    call :color_text 2f " -------------------- CompileProject ----------------------- "
+    call :color_text 2f " ------------------- CompileProject ----------------------- "
     endlocal
 goto :eof
 

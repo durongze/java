@@ -3,10 +3,19 @@
 
 #include <stdio.h>
 
+#if 0
+#define JNI_VERSION_1_1 0x00010001
+#define JNI_VERSION_1_2 0x00010002
+#define JNI_VERSION_1_4 0x00010004
+#define JNI_VERSION_1_6 0x00010006
+#define JNI_VERSION_1_8 0x00010008
+#endif
+
 // #define JAVA_HOME "D:\\Program Files\\Java\\jre1.8.0_60"
 #define JAVA_HOME "D:\\Program Files\\Java\\jdk-12.0.2"
 #define JVM_DLL JAVA_HOME "\\bin\\server\\" "jvm.dll"
 #define CLASSPATH  JAVA_HOME "\\jre\\lib"
+
 #ifdef __cplusplus
 #if __cplusplus
 extern "C" {
@@ -24,7 +33,7 @@ extern "C" {
 		options[1].optionString = { "-Djava.class.path=.;" CLASSPATH ";" };
 		options[2].optionString = "-verbose:NONE";
 		options[3].optionString = "-XX:+CreateMinidumpOnCrash";
-		JavaVMInitArgs args = { JNI_VERSION_10, 4, options, JNI_TRUE };
+		JavaVMInitArgs args = { JNI_VERSION_1_8, 4, options, JNI_TRUE };
 		char *jvmDll = JVM_DLL;
 		HMODULE hmod = LoadLibraryA(JVM_DLL);
 		JNICreateJavaVM pJNICreateJavaVM = (JNICreateJavaVM)GetProcAddress(hmod, "JNI_CreateJavaVM");
