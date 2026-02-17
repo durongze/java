@@ -318,6 +318,7 @@ goto :eof
     endlocal & set "%~2=%QtMsvcDepLibs%"
 goto :eof
 
+
 :DetectProgramDir
     setlocal EnableDelayedExpansion
     @rem SkySdk\VS2005\VC
