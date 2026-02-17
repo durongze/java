@@ -3,11 +3,17 @@
 
 call :DetectVsPath     VisualStudioCmd
 call :DetectProgramDir ProgramDir
+call :DetectQtDir      QtEnvBat          QtMsvcPath
 call :DetectAndroidDir AndroidDir
+call :DetectJavaPath   JAVA_HOME
 
 echo ProgramDir=%ProgramDir%
 echo AndroidDir=%AndroidDir%
 
+set CurDir=%~dp0
+set ProjDir=%CurDir:~0,-1%
+set software_dir="%ProjDir%\thirdparty"
+set HomeDir=%ProjDir%\out\windows
 
 set PERL5LIB=%PERL5LIB%
 set PerlPath=%ProgramDir%\Perl\bin
@@ -25,27 +31,15 @@ set PATH=%NASMPath%;%YASMPath%;%GPERFPath%;%PerlPath%;%CMakePath%;%SDCCPath%;%Ma
 
 set MakeProgram=%MakePath%\make.exe
 
-call :TaskKillSpecProcess  "cl.exe"
-call :TaskKillSpecProcess  "MSBuild.exe"
 
+pause
 chcp 65001
 
-rem set JAVA_HOME=%ProgramDir%\Java\jdk1.8.0_60
-rem set JAVA_HOME=%ProgramDir%\Java\jdk-12.0.2
-set JAVA_HOME=%ProgramDir%\Java\jdk-1.8
-
-set PATH=%PATH%;%JAVA_HOME%\bin;
-
-set PATH=%PATH%;%AndroidDir%\sdk\ndk-bundle\android-ndk-r20
-set PATH=%PATH%;%AndroidDir%\ndk\android-ndk-r19c
-
-java -version
-rem ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk
-
-
 @rem x86  or x64
+echo "VisualStudioCmd"
 call "%VisualStudioCmd%" x86
 
+echo "QtEnvBat"
 call "%QtEnvBat%"
 
 pushd %CurDir%
@@ -56,28 +50,87 @@ set ArchType=x64
 set BuildDir=BuildLib
 set BuildType=Debug
 
-set ProjName=CLibrary
+
 @rem call :get_suf_sub_str %ProjDir% \ ProjName
 
-set HomeDir=%ProjDir%\out\windows
+call :BuildJavaProj     "%CurDir%"
 
-javac -encoding utf-8 -d . callc.java
-javap -s com.durongze.jni.CallC
-rem javah -jni com.durongze.jni.CallC
-javac -encoding utf-8 -h . callc.java
+call :BuildAndroidProj  "%CurDir%"
 
-rem ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk
+set ProjName=CLibrary
+call :CompileProject    "%BuildDir%" "%BuildType%" "%ProjName%" "%HomeDir%"
 
-call :CompileProject "%BuildDir%" "%BuildType%" "%ProjName%" "%HomeDir%"
+set ProjName=CppCallJni
+call :CompileProject    "%BuildDir%" "%BuildType%" "%ProjName%" "%HomeDir%"
 
-rem del "%JAVA_HOME%\bin\CLibrary.dll"
-for /f %%i in ('dir /s /b "*.dll"') do (copy %%i .\)
-del                   "%JAVA_HOME%\bin\CLibrary.dll"
-copy ".\CLibrary.dll" "%JAVA_HOME%\bin\CLibrary.dll"
+%BuildDir%\%BuildType%\%ProjName%.exe
 
-java com.durongze.jni.CallC
+@rem %QtMsvcPath%\bin\windeployqt6.exe %BuildDir%\%BuildType%\%ProjName%.exe
 
 pause
+goto :eof
+
+:DetectJavaPath
+    setlocal EnableDelayedExpansion
+
+    call :color_text 2f " ++++++++++++++++++ DetectJavaPath +++++++++++++++++++++++ "
+    set VSDiskSet=C;D;E;F;G;
+
+    set AllProgramsPathSet="program"
+    set AllProgramsPathSet=%AllProgramsPathSet%;"programs"
+    set AllProgramsPathSet=%AllProgramsPathSet%;"Program Files"
+    set AllProgramsPathSet=%AllProgramsPathSet%;"Program Files (x86)"
+
+    set JavaPathSet=%JavaPathSet%;"Java\jdk-1.8"
+    set JavaPathSet=%JavaPathSet%;"Java\jdk-1.8.0_60"
+    set JavaPathSet=%JavaPathSet%;"Java\jdk-12.0.2"
+    set JavaPathSet=%JavaPathSet%;"Java\jdk-23"
+
+    set idx_a=0
+    for %%A in (!VSDiskSet!) do (
+        set /a idx_a+=1
+        set idx_b=0
+        for %%B in (!AllProgramsPathSet!) do (
+            set /a idx_b+=1
+            set idx_c=0
+            for %%C in (!JavaPathSet!) do (
+                set /a idx_c+=1
+                set CurJavaDirName=%%A:\%%~B\%%~C\
+                echo [!idx_a!][!idx_b!][!idx_c!] !CurJavaDirName!
+                if exist !CurJavaDirName! (
+                    set JavaDirName=!CurJavaDirName!
+                    goto :DetectJavaPathBreak
+                )
+            )
+        )
+    )
+    :DetectJavaPathBreak
+    echo Use:%JavaDirName%
+    set PATH=%PATH%;%JavaDirName%\bin;
+    java -version
+    call :color_text 2f " -------------------- DetectJavaPath ----------------------- "
+    endlocal & set "%~1=%JavaDirName%"
+goto :eof
+
+:BuildJavaProj
+    setlocal EnableDelayedExpansion
+    set ProjDir=%~1
+
+    call :color_text 2f " +++++++++++++++++++ BuildJavaProj +++++++++++++++++++ "
+
+    call :DetectJavaPath   JAVA_HOME
+    set PATH=%JAVA_HOME%\bin;%PATH%;
+	
+	pushd %ProjDir%
+        javac -encoding utf-8 -d . callc.java
+        javap -s com.durongze.jni.CallC
+        rem javah -jni com.durongze.jni.CallC
+        javac -encoding utf-8 -h . callc.java
+    popd
+
+    call :color_text 2f " ------------------- BuildJavaProj ------------------- "
+
+    endlocal
 goto :eof
 
 :BuildAndroidProj
@@ -85,19 +138,15 @@ goto :eof
     set ProjDir=%~1
     set ProgramDir=%ProgramDir%
     set AndroidDir=%AndroidDir%
-    call :color_text 2f " +++++++++++++++++++ FuncBuildAndroidProj +++++++++++++++++++ "
+    call :color_text 2f " +++++++++++++++++++ BuildAndroidProj +++++++++++++++++++ "
 
-    @rem set JAVA_HOME=%ProgramDir%\Java\jdk-12.0.2
-    @rem set JAVA_HOME=%ProgramDir%\Java\jdk-23
-    set JAVA_HOME=%ProgramDir%\Java\jdk-1.8
-
+    call :DetectJavaPath   JAVA_HOME
     set PATH=%JAVA_HOME%\bin;%PATH%;
 
+    call :DetectAndroidDir AndroidDir
+    set PATH=%AndroidDir%\ndk\android-ndk-r19c;%PATH%;
     set PATH=%AndroidDir%\ndk\25.1.8937393;%PATH%;
-    @rem set PATH=E:\program\android-ndk-r26b;%PATH%;
-    set PATH=%AndroidDir%\sdk\ndk-bundle\android-ndk-r20;%PATH%;
-
-    @rem set PATH=%AndroidDir%\ndk\android-ndk-r19c;%PATH%;
+    set PATH=%AndroidDir%\ndk-bundle\android-ndk-r20;%PATH%;
 
     java  -version
     javac -version
@@ -107,20 +156,176 @@ goto :eof
         call ndk-build    NDK_PROJECT_PATH=.    NDK_APPLICATION_MK=Application.mk    APP_BUILD_SCRIPT=Android.mk
     popd
 
-    call :color_text 2f " ------------------- FuncBuildAndroidProj ------------------- "
+    call :color_text 2f " ------------------- BuildAndroidProj ------------------- "
 
     endlocal
 goto :eof
 
 :MainStart
     setlocal EnableDelayedExpansion
-    call :color_text 2f " +++++++++++++++++++ FuncBuildAndroidProj +++++++++++++++++++ "
+    call :color_text 2f " +++++++++++++++++++ MainStart +++++++++++++++++++ "
     call :BuildAndroidProj "."
-    call :color_text 2f " ------------------- FuncBuildAndroidProj ------------------- "
+    call :color_text 2f " ------------------- MainStart ------------------- "
     endlocal
 goto :eof
 
+:DetectQtDir
+    setlocal EnableDelayedExpansion
+    @rem call "C:\Qt\6.5.2\msvc2019_64\bin\qtenv2.bat"
+    @rem call "C:\Qt\6.6.0\msvc2019_64\bin\qtenv2.bat"
+    @rem call "C:\Qt\6.9.0\msvc2022_64\bin\qtenv2.bat"
+    @rem call "D:/Qt/Qt5.12.0/5.12.0/msvc2017_64/bin/qtenv2.bat"
+    @rem call "D:\Qt\Qt5.14.2\5.14.2\msvc2017_64\bin\qtenv2.bat"
 
+    set VsBatFileVar=%~1
+    call :color_text 2f " ++++++++++++++++++ DetectQtDir +++++++++++++++++++++++ "
+    set VSDiskSet=C;D;E;F;G;
+
+    set QtPathSet="Qt"
+
+    set QtVerSet=%QtVerSet%;"6.5.2"
+    set QtVerSet=%QtVerSet%;"6.6.0"
+    set QtVerSet=%QtVerSet%;"6.9.0"
+    set QtVerSet=%QtVerSet%;"Qt5.12.0\5.12.0"
+    set QtVerSet=%QtVerSet%;"Qt5.14.2\5.14.2"
+
+    set QtMsvcSet=%QtMsvcSet%;"msvc2017_64"
+    set QtMsvcSet=%QtMsvcSet%;"msvc2019_64"
+    set QtMsvcSet=%QtMsvcSet%;"msvc2022_64"
+
+    set idx_a=0
+    for %%A in (!VSDiskSet!) do (
+        set /a idx_a+=1
+        set idx_b=0
+        for %%B in (!QtPathSet!) do (
+            set /a idx_b+=1
+            set idx_c=0
+            for %%C in (!QtVerSet!) do (
+                set /a idx_c+=1
+                for %%D in (!QtMsvcSet!) do (
+                    set /a idx_d+=1
+                    set CurQtEnvBatFile=%%A:\%%~B\%%~C\%%~D\bin\qtenv2.bat
+                    set CurQtMsvcPath=%%A:\%%~B\%%~C\%%~D
+                    echo [!idx_a!][!idx_b!][!idx_c!][!idx_d!] !CurQtEnvBatFile!
+                    if exist !CurQtEnvBatFile! (
+                        set QtEnvBatFile=!CurQtEnvBatFile!
+                        set QtMsvcPath=!CurQtMsvcPath!
+                        goto :DetectQtEnvPathBreak
+                    )
+                )
+            )
+        )
+    )
+    :DetectQtEnvPathBreak
+    echo Use:%QtEnvBatFile%
+    call :color_text 2f " ------------------ DetectQtDir ----------------------- "
+    endlocal & set "%~1=%QtEnvBatFile%"& set "%~2=%QtMsvcPath%"
+goto :eof
+
+:GenQtIncDirOpts
+    setlocal EnableDelayedExpansion
+
+    set QtMsvcPath=%~1
+    set OptIncFlag=%~2
+
+    call :color_text 2f " ++++++++++++++++++ GenQtIncDirOpts +++++++++++++++++++++++ "
+
+    set QtMsvcSet=%QtMsvcSet%;"msvc2017_64"
+    set QtMsvcSet=%QtMsvcSet%;"msvc2019_64"
+    set QtMsvcSet=%QtMsvcSet%;"msvc2022_64"
+
+    if "%OptIncFlag%"=="1" (
+        set OptIncFlag=-I
+    ) else (
+        set OptIncFlag=/external:I 
+    )
+
+    set QtMsvcIncDirs=%QtMsvcIncDirs%  %OptIncFlag%  %QtMsvcPath%/include 
+    set QtMsvcIncDirs=%QtMsvcIncDirs%  %OptIncFlag%  %QtMsvcPath%/mkspecs/win32-msvc 
+
+    set QtModDirs=%QtModDirs% QtCore 
+    set QtModDirs=%QtModDirs% QtCore5Compat 
+    set QtModDirs=%QtModDirs% QtGui 
+    set QtModDirs=%QtModDirs% QtWidgets 
+    set QtModDirs=%QtModDirs% QtConcurrent 
+    set QtModDirs=%QtModDirs% QtNetwork 
+    set QtModDirs=%QtModDirs% QtPrintSupport 
+    set QtModDirs=%QtModDirs% QtXml 
+    set QtModDirs=%QtModDirs% QtWebEngineCore 
+    set QtModDirs=%QtModDirs% QtQuick 
+    set QtModDirs=%QtModDirs% QtQml 
+    set QtModDirs=%QtModDirs% QtQmlIntegration 
+    set QtModDirs=%QtModDirs% QtQmlModels 
+    set QtModDirs=%QtModDirs% QtOpenGL 
+    set QtModDirs=%QtModDirs% QtWebChannel 
+    set QtModDirs=%QtModDirs% QtPositioning 
+
+    set idx_a=0
+    for %%A in (!QtMsvcPath!) do (
+        set /a idx_a+=1
+        set idx_b=0
+        for %%B in (!QtModDirs!) do (
+            set /a idx_b+=1
+
+            set CurQtMsvcModIncDirs=!OptIncFlag! %%A\include\%%~B
+            set QtMsvcIncDirs=!QtMsvcIncDirs! !CurQtMsvcModIncDirs!
+            echo [!idx_a!][!idx_b!] !CurQtMsvcModIncDirs!
+
+        )
+    )
+
+    call :color_text 2f " ------------------ GenQtIncDirOpts ----------------------- "
+    endlocal & set "%~3=%QtMsvcIncDirs%"
+goto :eof
+
+:GenQtDepLibs
+    setlocal EnableDelayedExpansion
+
+    set QtMsvcPath=%~1
+    set OptLinkFlag=
+
+    call :color_text 2f " ++++++++++++++++++ GenQtDepLibs +++++++++++++++++++++++ "
+
+    set QtMsvcSet=%QtMsvcSet%;"msvc2017_64"
+    set QtMsvcSet=%QtMsvcSet%;"msvc2019_64"
+    set QtMsvcSet=%QtMsvcSet%;"msvc2022_64"
+
+    set QtMsvcDepLibs=
+
+    set QtModLibs=%QtModLibs% Qt5Core 
+    @rem set QtModLibs=%QtModLibs% QtCore5Compat 
+    set QtModLibs=%QtModLibs% Qt5Gui 
+    set QtModLibs=%QtModLibs% Qt5Widgets 
+    set QtModLibs=%QtModLibs% Qt5Concurrent 
+    set QtModLibs=%QtModLibs% Qt5Network 
+    set QtModLibs=%QtModLibs% Qt5PrintSupport 
+    set QtModLibs=%QtModLibs% Qt5Xml 
+    set QtModLibs=%QtModLibs% Qt5WebEngineCore 
+    set QtModLibs=%QtModLibs% Qt5Quick 
+    set QtModLibs=%QtModLibs% Qt5Qml 
+    @rem set QtModLibs=%QtModLibs% Qt5QmlIntegration 
+    set QtModLibs=%QtModLibs% Qt5QmlModels 
+    set QtModLibs=%QtModLibs% Qt5OpenGL 
+    set QtModLibs=%QtModLibs% Qt5WebChannel 
+    set QtModLibs=%QtModLibs% Qt5Positioning 
+
+    set idx_a=0
+    for %%A in (!QtMsvcPath!) do (
+        set /a idx_a+=1
+        set idx_b=0
+        for %%B in (!QtModLibs!) do (
+            set /a idx_b+=1
+
+            set CurQtMsvcModLib=!OptLinkFlag! %%A\lib\%%~B.lib
+            set QtMsvcDepLibs=!QtMsvcDepLibs! !CurQtMsvcModLib!
+            echo [!idx_a!][!idx_b!] !CurQtMsvcModLib!
+
+        )
+    )
+
+    call :color_text 2f " ------------------ GenQtDepLibs ----------------------- "
+    endlocal & set "%~2=%QtMsvcDepLibs%"
+goto :eof
 
 :DetectProgramDir
     setlocal EnableDelayedExpansion
@@ -176,13 +381,13 @@ goto :eof
     set VCPathSet=%VCPathSet%;"Microsoft Visual Studio 14.0\VC\bin"
 
     set idx_a=0
-    for %%A in (!VSDiskSet!) do (
+    for %%C in (!VCPathSet!) do (
         set /a idx_a+=1
         set idx_b=0
         for %%B in (!AllProgramsPathSet!) do (
             set /a idx_b+=1
             set idx_c=0
-            for %%C in (!VCPathSet!) do (
+            for %%A in (!VSDiskSet!) do (
                 set /a idx_c+=1
                 set CurBatFile=%%A:\%%~B\%%~C\vcvarsall.bat
                 echo [!idx_a!][!idx_b!][!idx_c!] !CurBatFile!
@@ -199,32 +404,89 @@ goto :eof
     endlocal & set "%~1=%VsVcBatFile%"
 goto :eof
 
+:DetectWinSdk
+    setlocal EnableDelayedExpansion
+    set VsBatFileVar=%~1
+    set VS_ARCH=%~1
+
+    call :color_text 2f " ++++++++++++++++++ DetectWinSdk +++++++++++++++++++++++ "
+
+    set WindowsSdkVersion=10.0.22621.0
+
+    set VSDiskSet=C;D;E;F;G;
+
+    set AllProgramsPathSet=program
+    set AllProgramsPathSet=%AllProgramsPathSet%;programs
+
+    set VCPathSet=%VCPathSet%;"VS2022\Windows Kits\10"
+    set VCPathSet=%VCPathSet%;"SkySdk\VS2005\SDK\v2.0"
+
+    set idx_a=0
+    for %%C in (!VCPathSet!) do (
+        set /a idx_a+=1
+        set idx_b=0
+        for %%B in (!AllProgramsPathSet!) do (
+            set /a idx_b+=1
+            set idx_c=0
+            for %%A in (!VSDiskSet!) do (
+                set /a idx_c+=1
+                set CurWinSdkDirName=%%A:\%%B\%%~C
+                echo [!idx_a!][!idx_b!][!idx_c!] !CurWinSdkDirName!
+                if exist !CurWinSdkDirName! (
+                    set WindowsSdkDirName=!CurWinSdkDirName!
+                    set WIN_SDK_BIN=!WindowsSdkDirName!\bin\!WindowsSdkVersion!\!VS_ARCH!;
+                    set WIN_SDK_INC=!WIN_SDK_INC!;!WindowsSdkDirName!\Include\!WindowsSdkVersion!\um;
+                    set WIN_SDK_INC=!WIN_SDK_INC!;!WindowsSdkDirName!\Include\!WindowsSdkVersion!\ucrt;
+                    set WIN_SDK_INC=!WIN_SDK_INC!;!WindowsSdkDirName!\Include\!WindowsSdkVersion!\shared;
+                    set WIN_SDK_LIB=!WIN_SDK_LIB!;!WindowsSdkDirName!\Lib\!WindowsSdkVersion!\um\!VS_ARCH!;
+                    set WIN_SDK_LIB=!WIN_SDK_LIB!;!WindowsSdkDirName!\Lib\!WindowsSdkVersion!\ucrt\!VS_ARCH!;
+                    goto :DetectWinSdkBreak
+                )
+            )
+        )
+    )
+    :DetectWinSdkBreak
+    echo Use:%WindowsSdkDirName%
+    call :color_text 2f " ------------------ DetectWinSdk ----------------------- "
+    endlocal & set "%~2=%WindowsSdkDirName%" & set %~3=%WIN_SDK_BIN% & set %~4=%WIN_SDK_INC% & set %~5=%WIN_SDK_LIB%
+goto :eof
+
 :DetectAndroidDir
     setlocal EnableDelayedExpansion
     @rem SkySdk\VS2005\VC
     set SkySdkDiskSet=C;D;E;F;G;
-    set CurAndroidDir=
-    set idx=0
+
+    set AndroidPathSet="AndroidSdk\sdk"
+    set AndroidPathSet=%AndroidPathSet%;"Android\sdk"
+
+    set i_idx=0
     call :color_text 2f " +++++++++++++++++++ DetectAndroidDir +++++++++++++++++++++++ "
     for %%i in (%SkySdkDiskSet%) do (
-        set /a idx+=1
-        for /f "tokens=1-2 delims=|" %%B in ("AndroidSdk|Android") do (
-            set CurAndroidDir=%%i:\%%B
-            echo [!idx!] !CurAndroidDir!
-            if exist !CurAndroidDir!\ndk (
-                goto :DetectAndroidDirBreak
-            )
-            set CurAndroidDir=%%i:\%%C
-            echo [!idx!] !CurAndroidDir!
-            if exist !CurAndroidDir!\ndk (
-                goto :DetectAndroidDirBreak
+        set /a i_idx+=1
+        set j_idx=0
+        for %%j in (%AndroidPathSet%) do (
+            set /a j_idx+=1
+            set AndroidSdkDir=%%i:\%%~j
+            for /f "tokens=1-2 delims=|" %%B in ("ndk-bundle|ndk") do (
+                set CurAndroidNdkDir=!AndroidSdkDir!\%%~B
+                echo [!i_idx!][!j_idx!] !CurAndroidNdkDir!
+                if exist !CurAndroidNdkDir! (
+                    set AndroidNdkDir=!CurAndroidNdkDir!
+                    goto :DetectAndroidDirBreak
+                )
+                set CurAndroidNdkDir=!AndroidSdkDir!\%%~C
+                echo [!i_idx!][!j_idx!] !CurAndroidNdkDir!
+                if exist !CurAndroidNdkDir! (
+                    set AndroidNdkDir=!CurAndroidNdkDir!
+                    goto :DetectAndroidDirBreak
+                )
             )
         )
     )
     :DetectAndroidDirBreak
-    set AndroidDir=!CurAndroidDir!
+    echo Use:%AndroidSdkDir%
     call :color_text 2f " ------------------- DetectAndroidDir ----------------------- "
-    endlocal & set %~1=%AndroidDir%
+    endlocal & set %~1=%AndroidSdkDir%
 goto :eof
 
 :CompileProject
@@ -264,10 +526,10 @@ goto :eof
         cmake ..  %ALL_DEFS%  -A %ArchType%
         @rem cmake      ..  %ALL_DEFS%  -G "NMake Makefiles" 
         @rem call :ResetSystemEnv
-        @rem cmake --build .  --config %BuildType%  --target %ProjName%
-        cmake --build . -j16  --config %BuildType% --target CppCallJni
-        Debug\CppCallJni.exe
-        dumpbin /dependents Debug\CppCallJni.exe
+        @rem cmake --build .       --config %BuildType%  --target %ProjName%
+        cmake      --build .       --config %BuildType%  --target %ProjName%
+        @rem %MakeProgram%  VERBOSE=1
+        @rem dumpbin /dependents %BuildDir%\%BuildType%\%ProjName%.exe
     popd
     echo "调试时如果报异常，记得不要点击中断，要点击继续"
     call :color_text 2f " ------------------- CompileProject ----------------------- "
