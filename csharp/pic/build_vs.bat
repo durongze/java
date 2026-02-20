@@ -32,7 +32,7 @@ set BuildDir=dyzbuild
 set BuildType=Debug
 
 @rem call :get_suf_sub_str %ProjDir% \ ProjName
-set ProjName=HaceauGoogleTranslate
+set ProjName=gifApp
 
 call :CompileProject "%BuildDir%" "%BuildType%" "%ProjName%" "%HomeDir%"
 pause

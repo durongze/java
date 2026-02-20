@@ -19,7 +19,7 @@ file(GLOB GIF_APP_SRC ExampleMain.cs)
 
 list(REMOVE_ITEM  GIF_DLL_SRC ${GIF_APP_SRC})
 
-add_library    (libgif STATIC ${GIF_DLL_SRC}               )
+add_library    (libgif SHARED ${GIF_DLL_SRC}               )
 add_executable (gifApp        ${GIF_APP_SRC} ${GIF_DLL_SRC})
 
 # Set the .NET Framework version for the executable.

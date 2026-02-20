@@ -35,8 +35,10 @@ pause
 chcp 65001
 
 @rem x86  or x64
+echo "VisualStudioCmd"
 call "%VisualStudioCmd%" x64
 
+echo "QtEnvBat"
 call "%QtEnvBat%"
 
 pushd %CurDir%
@@ -47,14 +49,15 @@ set ArchType=x64
 set BuildDir=BuildLib
 set BuildType=Debug
 
-set ProjName=CppCallJni
+
 @rem call :get_suf_sub_str %ProjDir% \ ProjName
 
-call :BuildJavaProj     %CurDir%
+call :BuildJavaProj     "%CurDir%"
 
-call :BuildAndroidProj  %CurDir%
+call :BuildAndroidProj  "%CurDir%"
 
-call :CompileProject "%BuildDir%" "%BuildType%" "%ProjName%" "%HomeDir%"
+set ProjName=CppCallJni
+call :CompileProject    "%BuildDir%" "%BuildType%" "%ProjName%" "%HomeDir%"
 
 @rem %QtMsvcPath%\bin\windeployqt6.exe %BuildDir%\%BuildType%\%ProjName%.exe
 
@@ -318,7 +321,6 @@ goto :eof
     endlocal & set "%~2=%QtMsvcDepLibs%"
 goto :eof
 
-
 :DetectProgramDir
     setlocal EnableDelayedExpansion
     @rem SkySdk\VS2005\VC
@@ -521,8 +523,7 @@ goto :eof
         @rem cmake --build .       --config %BuildType%  --target %ProjName%
         cmake      --build .       --config %BuildType%  --target %ProjName%
         @rem %MakeProgram%  VERBOSE=1
-        Debug\CppCallJni.exe
-        dumpbin /dependents Debug\CppCallJni.exe
+        dumpbin /dependents %BuildDir%\%BuildType%\%ProjName%.exe
     popd
     echo "调试时如果报异常，记得不要点击中断，要点击继续"
     call :color_text 2f " ------------------- CompileProject ----------------------- "
