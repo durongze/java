@@ -34,7 +34,7 @@ namespace Example
 
 		static void DrawWord(int bx, int by, Graphics g, String str)
 		{
-			Font f = new Font("宋体", 14);
+			Font f = new Font("宋体", 68);
 			Brush b = new SolidBrush(Color.Red);
 			g.DrawString(str, f, b, bx, by);
 		}
@@ -53,7 +53,7 @@ namespace Example
 			Graphics g = Graphics.FromImage(img);
 			y = CalcCoordX(6, 40, i);
 			x = CalcCoordY(6, 40, i);
-			DrawYellowBox(x, y, g);
+			// DrawYellowBox(x, y, g);
 			DrawWord(x, y, g, s.Substring(i, 1));
 			return img;
 		}
@@ -93,11 +93,15 @@ namespace Example
 			return 0;
 		}
 
-		static void LoadImages(String[] imageFiles, List<Image> images)
+		static void LoadImages(String[] imageFiles, List<Image> images, int fillNum)
 		{
 			for (int i = 0; i < imageFiles.Length; ++i)
 			{
 				images.Add(Image.FromFile(imageFiles[i]));
+			}
+			for (int i = imageFiles.Length; i < fillNum; ++i)
+			{
+				images.Add(Image.FromFile(imageFiles[i % imageFiles.Length]));
 			}
 		}
 		static void EncGifFile(List<Image> images, String outputFile)
@@ -145,7 +149,7 @@ namespace Example
 			}
 #else
 			string [] PngFiles = GetAllFile("res");
-			LoadImages(PngFiles, images);
+			LoadImages(PngFiles, images, text.Length);
 			FixImages(text, images);
 #endif
 			EncGifFile(images, "res/out.gif");
