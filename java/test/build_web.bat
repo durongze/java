@@ -27,10 +27,11 @@ set PATH=%PATH%;%JAVA_HOME%\bin;
 set CLASSPATH=%CLASSPATH%;%all_jar%;
 
 :bat_start
-    javac -classpath %all_jar% %proj_name%.java
-    mkdir com\durongze\
-    move %proj_name%.class com/durongze/
-    call:color_text 4e "+++++++++++++++java+++++++++++++"
+    call:color_text 4e " +++++++++++++++ bat_start +++++++++++++++ "
+    javac  -encoding utf-8 -d . -classpath %all_jar% %proj_name%.java
+    mkdir com\durongze
+    move %proj_name%.class com\durongze
+    call:color_text 4e " --------------- bat_start --------------- "
     java com.durongze.%proj_name%
 goto :eof
 
